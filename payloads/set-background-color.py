@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import sys
 import os
 
@@ -44,23 +43,18 @@ for campo in campos_formulario:
         # Enviar a requisição
         resposta_teste = requests.post(url_alvo, data=dados_formulario, headers=headers)
 
-        # Usar BeautifulSoup para fazer o parsing do HTML da resposta
-        soup = BeautifulSoup(resposta_teste.text, 'html.parser')
-        titulo = soup.find('title').text if soup.find('title') else ''
+        print(f"Teste {total_testes}: Campo '{campo}' com payload '{payload}'. Código de status: {resposta_teste.status_code}")
 
-        # Print detalhes do teste atual
-        print(f"Teste {total_testes}: Campo '{campo}' com payload '{payload}'. Título: {titulo[:46]}")
-
-        # Verificar se o teste foi bem-sucedido
-        if titulo != "Acesso Bloqueado":
-            print(f"Teste #{total_testes} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' encontrada no campo '{campo}'!")
+        # Verifica se o teste foi bem-sucedido baseando-se no código de status e no conteúdo da resposta
+        if resposta_teste.status_code == 200 and "Acesso Bloqueado" not in resposta_teste.text:
+            print(f"Teste #{total_testes} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' possivelmente encontrada no campo '{campo}'!")
             testes_passaram += 1
         else:
-            print(f"Teste #{total_testes} FALHOU: Acesso bloqueado.")
+            print(f"Teste #{total_testes} FALHOU: Código de status: {resposta_teste.status_code} ou acesso bloqueado.")
             testes_falharam += 1
 
 # Reportar os resultados finais
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {testes_falharam}")
-print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo
+print(f"Url Testada: {url_alvo}")

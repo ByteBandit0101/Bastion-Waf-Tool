@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import sys
 import os
 
@@ -28,17 +27,14 @@ payloads = {
 # Função para enviar a requisição e verificar a resposta
 def enviar_requisicao_e_verificar_resposta(url_completa, tipo_vulnerabilidade, teste_numero):
     resposta_teste = requests.get(url_completa, headers=headers)
-    soup = BeautifulSoup(resposta_teste.text, 'html.parser')
-    titulo = soup.find('title').text if soup.find('title') else ''
-
-    print(f"Teste {teste_numero}: Testando '{tipo_vulnerabilidade}'. Título: {titulo[:46]}")
+    print(f"Teste {teste_numero}: Testando '{tipo_vulnerabilidade}'. Código de status: {resposta_teste.status_code}")
     
-    if titulo != "Acesso Bloqueado":
+    if resposta_teste.status_code == 200 and "Acesso Bloqueado" not in resposta_teste.text:
         print(f"Teste #{teste_numero} PASSOU: Vulnerabilidade de '{tipo_vulnerabilidade}' possivelmente encontrada!")
-        return 1  # Retornar 1 se o teste passou
+        return 1
     else:
-        print(f"Teste #{teste_numero} FALHOU: Acesso bloqueado.")
-        return 0  # Retornar 0 se o teste falhou
+        print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code} ou acesso bloqueado.")
+        return 0
 
 # Contadores para os resultados dos testes
 total_testes = 0
@@ -47,7 +43,7 @@ testes_falharam = 0
 
 # Realizar os testes
 for tipo_vulnerabilidade, payload in payloads.items():
-    total_testes += 1  # Incrementar o contador total de testes
+    total_testes += 1
     url_completa = f"{url_alvo}&csrf-token=&initials=&user-poll-php-submit-button=Submit+Vote{payload}"
     resultado_teste = enviar_requisicao_e_verificar_resposta(url_completa, tipo_vulnerabilidade, total_testes)
     if resultado_teste == 1:
@@ -59,4 +55,4 @@ for tipo_vulnerabilidade, payload in payloads.items():
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {testes_falharam}")
-print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo
+print(f"Url Testada: {url_alvo}")

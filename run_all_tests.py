@@ -31,7 +31,7 @@ def main():
     url_base = input("Por favor, insira a URL base: ")
 
     # Caminho para o diretório contendo os scripts de teste
-    test_scripts_dir = pathlib.Path('./payloads')  # Atualize este caminho conforme necessário
+    test_scripts_dir = pathlib.Path('.')  # Atualize este caminho conforme necessário
 
     # Lista para armazenar os resultados dos testes
     test_results = []

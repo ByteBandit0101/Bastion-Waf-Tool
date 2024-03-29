@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import sys
 import os
 
@@ -9,61 +8,48 @@ else:
     print("URL base não foi fornecida.")
     sys.exit(1)
 
-# Construir a URL alvo usando a URL base e o nome da página
 url_alvo = f"{url_base}/index.php?page=repeater.php"
 print(url_alvo)
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
 
-# Função para enviar a requisição e verificar a resposta
 def enviar_requisicao_e_verificar_resposta(dados_formulario, tipo_vulnerabilidade, campo, teste_numero):
     resposta_teste = requests.post(url_alvo, data=dados_formulario, headers=headers)
-    soup = BeautifulSoup(resposta_teste.text, 'html.parser')
-    titulo = soup.find('title').text if soup.find('title') else ''
-    print(f"Teste {teste_numero}: Campo '{campo}' com payload de '{tipo_vulnerabilidade}'. Título: {titulo[:46]}")
+    print(f"Teste {teste_numero}: Campo '{campo}' com payload de '{tipo_vulnerabilidade}'. Código de status: {resposta_teste.status_code}")
     
-    if titulo != "Acesso Bloqueado":
+    if resposta_teste.status_code == 200 and "Acesso Bloqueado" not in resposta_teste.text:
         print(f"Teste #{teste_numero} PASSOU: Vulnerabilidade de '{tipo_vulnerabilidade}' possivelmente encontrada!")
         return 1
     else:
-        print(f"Teste #{teste_numero} FALHOU: Acesso bloqueado.")
+        print(f"Teste #{teste_numero} FALHOU: Acesso potencialmente bloqueado ou vulnerabilidade não explorada.")
         return 0
 
-# Lista de campos para testar
 campos_formulario = ['string_to_repeat', 'times_to_repeat_string']
 
-# Dicionário com payloads para vulnerabilidades específicas
 payloads = {
     'XSS': "<script>alert('XSS')</script>",
     'HTML Injection': "<h1>HTML Injection</h1>",
     'Buffer Overflow': 'A' * 5000  # Ajuste o tamanho conforme necessário
 }
 
-# Contadores para os resultados dos testes
 total_testes = 0
 testes_passaram = 0
-testes_falharam = 0
 
-# Realizar os testes
 for campo in campos_formulario:
-    # Testando vulnerabilidades específicas em cada campo
     for tipo_vulnerabilidade, payload in payloads.items():
         dados_formulario = {c: 'teste' for c in campos_formulario}
-        dados_formulario[campo] = payload  # Substitui o valor de um campo pelo payload
+        dados_formulario[campo] = payload
 
-        # Enviar a requisição e verificar a resposta
         total_testes += 1
         testes_passaram += enviar_requisicao_e_verificar_resposta(dados_formulario, tipo_vulnerabilidade, campo, total_testes)
 
-# Teste de Parameter Addition
 dados_formulario = {c: 'teste' for c in campos_formulario}
-dados_formulario['parametro_inesperado'] = 'valor_inesperado'  # Adiciona um parâmetro inesperado
+dados_formulario['parametro_inesperado'] = 'valor_inesperado'
 total_testes += 1
 testes_passaram += enviar_requisicao_e_verificar_resposta(dados_formulario, 'Parameter Addition', 'parametro_inesperado', total_testes)
 
-# Reportar os resultados finais
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {total_testes - testes_passaram}")
-print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo
+print(f"Url Testada: {url_alvo}")

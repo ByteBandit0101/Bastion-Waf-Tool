@@ -25,8 +25,8 @@ payloads = {
     'HTML Injection': "<h1>HTML Injection</h1>",
     'JavaScript Validation Bypass': "admin' --",
     'O/S Command injection': "127.0.0.1 && ls",
-    'O/S Command injection': "127.0.0.1;ls -la /",
     'Application Log Injection': "127.0.0.1\nInjected log entry",
+    # Note que a chave 'O/S Command injection' estava duplicada, considere dar nomes únicos
 }
 
 # Contadores para os resultados dos testes
@@ -37,33 +37,24 @@ testes_falharam = 0
 # Realizar os testes
 for campo in campos_formulario:
     for tipo_vulnerabilidade, payload in payloads.items():
-        # Preparar os dados do formulário, com um campo contendo o payload e os outros 'teste'
-        dados_formulario = {c: 'teste' for c in campos_formulario}  # Todos os campos com 'teste'
-        dados_formulario[campo] = payload  # Campo atual com o payload
+        dados_formulario = {c: 'teste' for c in campos_formulario}
+        dados_formulario[campo] = payload
 
-        # Incrementar o contador total de testes
         total_testes += 1
 
-        # Enviar a requisição
         resposta_teste = requests.post(url_alvo, data=dados_formulario, headers=headers)
 
-        # Usar BeautifulSoup para fazer o parsing do HTML da resposta
-        soup = BeautifulSoup(resposta_teste.text, 'html.parser')
-        titulo = soup.find('title').text if soup.find('title') else ''
+        print(f"Teste {total_testes}: Campo '{campo}' com payload '{payload}'. Código de status: {resposta_teste.status_code}")
 
-        # Print detalhes do teste atual
-        print(f"Teste {total_testes}: Campo '{campo}' com payload '{payload}'. Título: {titulo[:46]}")
-
-        # Verificar se o teste foi bem-sucedido
-        if titulo != "Acesso Bloqueado":
-            print(f"Teste #{total_testes} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' encontrada no campo '{campo}'!")
+        if resposta_teste.status_code == 200:
+            print(f"Teste #{total_testes} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' possivelmente encontrada no campo '{campo}'!")
             testes_passaram += 1
         else:
-            print(f"Teste #{total_testes} FALHOU: Acesso bloqueado.")
+            print(f"Teste #{total_testes} FALHOU: Código de status: {resposta_teste.status_code}.")
             testes_falharam += 1
 
 # Reportar os resultados finais
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {testes_falharam}")
-print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo
+print(f"Url Testada: {url_alvo}")

@@ -26,7 +26,6 @@ payloads = {
 # Função para enviar a requisição e verificar a resposta
 def enviar_requisicao_e_verificar_resposta(url_completa, tipo_vulnerabilidade, teste_numero):
     resposta_teste = requests.get(url_completa, headers=headers)
-    
     # Depurar a resposta
     #depurar_resposta(resposta_teste, teste_numero)
 
@@ -35,11 +34,11 @@ def enviar_requisicao_e_verificar_resposta(url_completa, tipo_vulnerabilidade, t
 
     print(f"Teste {teste_numero}: Testando '{tipo_vulnerabilidade}'. Título: {titulo[:46]}")
     
-    if titulo != "Acesso Bloqueado":
+    if resposta_teste.status_code == 200:
         print(f"Teste #{teste_numero} PASSOU: Vulnerabilidade de '{tipo_vulnerabilidade}' possivelmente encontrada!")
         return 1
     else:
-        print(f"Teste #{teste_numero} FALHOU: Acesso bloqueado.")
+        print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code} ou título 'Acesso Bloqueado' encontrado.")
         return 0
 
 # Função para depurar a resposta

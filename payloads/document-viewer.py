@@ -35,12 +35,13 @@ async def enviar_requisicao_e_verificar_resposta(payload, tipo_vulnerabilidade, 
         titulo = soup.find('title').string if soup.find('title') else ''
 
         # Verificar se o teste foi bem-sucedido
-        if titulo not in ["Acesso Bloqueado", "Erro"]:
-            print(f"Teste #{teste_numero} PASSOU: '{tipo_vulnerabilidade}' - O título é diferente de 'Acesso Bloqueado' ou 'Erro'.")
+        if resposta_teste.status_code == 200:
+            print(f"Teste #{teste_numero} PASSOU: Vulnerabilidade de '{tipo_vulnerabilidade}' possivelmente encontrada!")
             return 1
         else:
-            print(f"Teste #{teste_numero} FALHOU: '{tipo_vulnerabilidade}' - Título detectado: '{titulo}'.")
+            print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code} ou título 'Acesso Bloqueado' encontrado.")
             return 0
+        
 # Função para imprimir detalhes da resposta para depuração
 #def depurar_resposta(resposta, teste_numero, tipo_vulnerabilidade):
     print(f"\nDetalhes da Resposta do Teste #{teste_numero} ({tipo_vulnerabilidade}):")

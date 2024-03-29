@@ -32,16 +32,14 @@ payloads = {
 # Função para enviar a requisição e verificar a resposta
 def enviar_requisicao_e_verificar_resposta(url_completa, tipo_vulnerabilidade, teste_numero):
     resposta_teste = requests.get(url_completa, headers=headers)
-    soup = BeautifulSoup(resposta_teste.text, 'html.parser')
-    titulo = soup.find('title').text if soup.find('title') else ''
 
-    print(f"Teste {teste_numero}: Testando '{tipo_vulnerabilidade}'. Título: {titulo[:46]}")
+    print(f"Teste {teste_numero}: Testando '{tipo_vulnerabilidade}'. Código de status: {resposta_teste.status_code}")
     
-    if titulo != "Acesso Bloqueado":
+    if resposta_teste.status_code == 200:
         print(f"Teste #{teste_numero} PASSOU: Vulnerabilidade de '{tipo_vulnerabilidade}' possivelmente encontrada!")
         return 1
     else:
-        print(f"Teste #{teste_numero} FALHOU: Acesso bloqueado.")
+        print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code}.")
         return 0
 
 # Contadores para os resultados dos testes
@@ -64,4 +62,4 @@ for tipo_vulnerabilidade, payload in payloads.items():
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {testes_falharam}")
-print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo
+print(f"Url Testada: {url_alvo}")
