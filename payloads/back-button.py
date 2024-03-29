@@ -3,12 +3,16 @@ from bs4 import BeautifulSoup
 import sys
 import os
 
-if len(sys.argv) > 1:
+if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
+    taxa_envio = sys.argv[2]  # Recebe a taxa de envio como segundo argumento
 else:
-    print("URL base não foi fornecida.")
+    print("URL base e/ou taxa de envio não foram fornecidas.")
     sys.exit(1)
 
+# Mapeia a taxa de envio para um intervalo de tempo específico
+delays = {'baixo': 7, 'medio': 2, 'alto': 0.5}
+delay = delays.get(taxa_envio, 2)  # Usa 'medio' como padrão se a taxa não for reconhecida
 
 # Construir a URL alvo usando a URL base e o nome da página
 url_alvo = f"{url_base}/index.php?page=back-button.php"
