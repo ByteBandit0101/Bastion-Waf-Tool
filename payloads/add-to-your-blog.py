@@ -8,12 +8,9 @@ if len(sys.argv) > 1:
 else:
     print("URL base não foi fornecida.")
     sys.exit(1)
-
-# Obter o nome do arquivo do script atual e remover a extensão '.py' para obter o nome da página
-script_name = os.path.basename(__file__).replace('.py', '')
-
+    
 # Construir a URL alvo usando a URL base e o nome da página
-url_alvo = f"{url_base}/index.php?page={script_name}.php"
+url_alvo = f"{url_base}/index.php?page=add-to-your-blog.php"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
@@ -64,4 +61,4 @@ for campo in campos_formulario:
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {testes_falharam}")
-print(url_alvo)
+print(f"Url Testada: {url_alvo}")

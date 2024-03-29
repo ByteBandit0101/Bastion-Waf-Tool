@@ -1,8 +1,19 @@
 import requests
 from bs4 import BeautifulSoup
+import sys
+import os
 
-# Configurações iniciais
-url_base = "https://sone.codatahml.pb.gov.br/index.php?page=arbitrary-file-inclusion.php"
+if len(sys.argv) > 1:
+    url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
+else:
+    print("URL base não foi fornecida.")
+    sys.exit(1)
+
+
+# Construir a URL alvo usando a URL base e o nome da página
+url_alvo = f"{url_base}/index.php?page=arbritary-file-inclusion.php"
+print(url_alvo)
+
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
@@ -42,7 +53,7 @@ testes_falharam = 0
 for tipo_vulnerabilidade, payload in payloads.items():
     total_testes += 1
     payload_encoded = requests.utils.quote(payload)
-    url_completa = f"{url_base}&page={payload_encoded}"
+    url_completa = f"{url_alvo}&page={payload_encoded}"
     resultado_teste = enviar_requisicao_e_verificar_resposta(url_completa, tipo_vulnerabilidade, total_testes)
     if resultado_teste == 1:
         testes_passaram += 1
@@ -53,3 +64,4 @@ for tipo_vulnerabilidade, payload in payloads.items():
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {testes_falharam}")
+print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo

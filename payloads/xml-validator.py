@@ -1,8 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
+import sys
+import os
 
-# Configurações iniciais
-url_base = "https://sone.codatahml.pb.gov.br/index.php?page=xml-validator.php"
+if len(sys.argv) > 1:
+    url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
+else:
+    print("URL base não foi fornecida.")
+    sys.exit(1)
+
+# Construir a URL alvo usando a URL base e o nome da página
+url_alvo = f"{url_base}/index.php?page=xml-validator.php"
+print(url_alvo)
+
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
@@ -40,7 +50,7 @@ for tipo_vulnerabilidade, payload in payloads.items():
     total_testes += 1
     # URL encode do payload XML para garantir que ele seja enviado corretamente
     payload_encoded = requests.utils.quote(payload)
-    url_completa = f"{url_base}&xml={payload_encoded}&xml-validator-php-submit-button=Validate+XML"
+    url_completa = f"{url_alvo}&xml={payload_encoded}&xml-validator-php-submit-button=Validate+XML"
     resultado_teste = enviar_requisicao_e_verificar_resposta(url_completa, tipo_vulnerabilidade, total_testes)
     if resultado_teste == 1:
         testes_passaram += 1
@@ -51,3 +61,4 @@ for tipo_vulnerabilidade, payload in payloads.items():
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {testes_falharam}")
+print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo
