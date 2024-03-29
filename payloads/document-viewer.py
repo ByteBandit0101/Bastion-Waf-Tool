@@ -1,56 +1,47 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import quote
+import asyncio
+import httpx
 import sys
 import os
 
 if len(sys.argv) > 1:
-    url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
+    url_base = sys.argv[1]
 else:
     print("URL base não foi fornecida.")
     sys.exit(1)
 
-# Construir a URL alvo usando a URL base e o nome da página
 url_alvo = f"{url_base}/index.php?page=document-viewer.php"
 print(url_alvo)
-headers = {
+headers_base = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
+
 # Payloads para testar
 payloads = {
     'Cross Site Scripting': "<script>alert('XSS')</script>",
     'HTML Injection': "<h1>HTML Injection</h1>",
     'HTTP Parameter Pollution': "valid_file.pdf&file=malicious_file.txt",
-    'Frame Source Injection': "<iframe src='http://malicious.com'></iframe>",
+    'Frame Source Injection': "<iframe src='http://google.com'></iframe>",
 }
+
 # Função assíncrona para enviar a requisição e verificar a resposta
 async def enviar_requisicao_e_verificar_resposta(payload, tipo_vulnerabilidade, teste_numero):
     url_completa = f"{url_alvo}&file={quote(payload)}"  # Usando quote para codificar o payload
     async with httpx.AsyncClient(http2=True) as client:
         resposta_teste = await client.get(url_completa, headers=headers_base)
-        
-        # Imprime detalhes da resposta para depuração
-        #depurar_resposta(resposta_teste, teste_numero, tipo_vulnerabilidade)
-        # Usar BeautifulSoup para extrair o título da resposta HTML
         soup = BeautifulSoup(resposta_teste.text, 'html.parser')
         titulo = soup.find('title').string if soup.find('title') else ''
 
-        # Verificar se o teste foi bem-sucedido
+        print(f"Teste {teste_numero}: Testando '{tipo_vulnerabilidade}'. Código de status: {resposta_teste.status_code}, Título: {titulo}")
+
         if resposta_teste.status_code == 200:
-            print(f"Teste #{teste_numero} PASSOU: Vulnerabilidade de '{tipo_vulnerabilidade}' possivelmente encontrada!")
+            print(f"Teste #{teste_numero} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' possivelmente encontrada!")
             return 1
         else:
-            print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code} ou título 'Acesso Bloqueado' encontrado.")
+            print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code}.")
             return 0
-        
-# Função para imprimir detalhes da resposta para depuração
-#def depurar_resposta(resposta, teste_numero, tipo_vulnerabilidade):
-    print(f"\nDetalhes da Resposta do Teste #{teste_numero} ({tipo_vulnerabilidade}):")
-    print(f"Código de Status: {resposta.status_code}")
-    print("Cabeçalhos da Resposta:")
-    for chave, valor in resposta.headers.items():
-        print(f"  {chave}: {valor}")
-    print("Corpo da Resposta (trecho):")
-    print(resposta.text[:500])  # Exibe os primeiros 500 caracteres do corpo da resposta para brevidade
 
 # Função principal para executar os testes
 async def executar_testes():
@@ -70,7 +61,7 @@ async def executar_testes():
     print(f"\nTotal de Testes: {total_testes}")
     print(f"Testes Passaram: {testes_passaram}")
     print(f"Testes Falharam: {testes_falharam}")
-    print(f"Url Testada: {url_alvo}") #Depurar e informar a url final que foi alvo
+    print(f"Url Testada: {url_alvo}")
 
 # Executar os testes
 if __name__ == "__main__":
