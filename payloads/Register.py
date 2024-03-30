@@ -9,6 +9,7 @@ from pathlib import Path
 #diretório dos logs .json
 logs_dir = Path('logs')
 
+
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
     taxa_envio = sys.argv[2]  # Recebe a taxa de envio como segundo argumento
