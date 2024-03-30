@@ -5,6 +5,7 @@ import asyncio
 import httpx
 import sys
 import time
+import json
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -62,11 +63,18 @@ async def executar_testes():
         else:
             testes_falharam += 1
         time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
-    # Reportar os resultados finais
-    print(f"\nTotal de Testes: {total_testes}")
-    print(f"Testes Passaram: {testes_passaram}")
-    print(f"Testes Falharam: {testes_falharam}")
-    print(f"Url Testada: {url_alvo}")
+    #Imprimindo os resultados
+    resultados = {
+    'nome_script': 'Nome do Script',
+    'total_testes': total_testes,
+    'testes_passaram': testes_passaram,
+    'testes_falharam': testes_falharam,
+    'url_testada': url_alvo
+    }
+    resultados_json = json.dumps(resultados)
+
+    # Imprimindo a string JSON
+    print(resultados_json)
 
 # Executar os testes
 if __name__ == "__main__":

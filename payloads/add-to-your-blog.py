@@ -1,7 +1,9 @@
 import requests
 import sys
-import os
 import time
+import json
+from datetime import datetime
+from pathlib import Path
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -76,3 +78,22 @@ print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
 print(f"Testes Falharam: {testes_falharam}")
 print(f"Url Testada: {url_alvo}")
+
+#Parte de obtenção dos dados 
+# Gravar os resultados em um arquivo JSON
+resultados = {
+    'data_hora': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+    'url_base': url_base,
+    'total_testes': total_testes,
+    'testes_passaram': testes_passaram,
+    'testes_falharam': testes_falharam,
+    'url_testada': url_alvo
+}
+
+nome_arquivo = f"resultados_{resultados['data_hora']}.json"
+caminho_completo_arquivo = logs_dir.joinpath(nome_arquivo)
+
+with open(caminho_completo_arquivo, 'w') as arquivo:
+    json.dump(resultados, arquivo, indent=4)
+
+print(f"\nResultados gravados em {caminho_completo_arquivo}")
