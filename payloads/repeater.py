@@ -3,6 +3,11 @@ import sys
 import os
 import time
 import json
+from datetime import datetime
+from pathlib import Path
+
+#diretório dos logs .json
+logs_dir = Path('logs')
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -55,17 +60,29 @@ dados_formulario = {c: 'teste' for c in campos_formulario}
 dados_formulario['parametro_inesperado'] = 'valor_inesperado'
 total_testes += 1
 testes_passaram += enviar_requisicao_e_verificar_resposta(dados_formulario, 'Parameter Addition', 'parametro_inesperado', total_testes)
+
 time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
 
-#Imprimindo os resultados
+print(f"\nTotal de Testes: {total_testes}")
+print(f"Testes Passaram: {testes_passaram}")
+print(f"Testes Falharam: {total_testes - testes_passaram}")
+print(f"Url Testada: {url_alvo}")
+
+#-------------------------Parte de obtenção dos dados--------------------------------------- 
+# Gravar os resultados em um arquivo JSON
 resultados = {
-    'nome_script': 'Nome do Script',
+    'data_hora': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+    'url_base': url_base,
     'total_testes': total_testes,
     'testes_passaram': testes_passaram,
-    'testes_falharam': testes_falharam,
+    'testes_falharam': total_testes - testes_passaram,
     'url_testada': url_alvo
 }
-resultados_json = json.dumps(resultados)
 
-# Imprimindo a string JSON
-print(resultados_json)
+nome_arquivo = f"resultados_{resultados['data_hora']}.json"
+caminho_completo_arquivo = logs_dir.joinpath(nome_arquivo)
+
+with open(caminho_completo_arquivo, 'w') as arquivo:
+    json.dump(resultados, arquivo, indent=4)
+
+print(f"\nResultados gravados em {caminho_completo_arquivo}")

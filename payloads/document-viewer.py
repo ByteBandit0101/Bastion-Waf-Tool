@@ -6,6 +6,11 @@ import httpx
 import sys
 import time
 import json
+from datetime import datetime
+from pathlib import Path
+
+#diretório dos logs .json
+logs_dir = Path('logs')
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -63,19 +68,32 @@ async def executar_testes():
         else:
             testes_falharam += 1
         time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
-    #Imprimindo os resultados
+    # Reportar os resultados finais
+    print(f"\nTotal de Testes: {total_testes}")
+    print(f"Testes Passaram: {testes_passaram}")
+    print(f"Testes Falharam: {testes_falharam}")
+    print(f"Url Testada: {url_alvo}")
+    
+    #-------------------------Parte de obtenção dos dados---------------------------------------
+    # Gravar os resultados em um arquivo JSON na pasta 'logs'
     resultados = {
-    'nome_script': 'Nome do Script',
-    'total_testes': total_testes,
-    'testes_passaram': testes_passaram,
-    'testes_falharam': testes_falharam,
-    'url_testada': url_alvo
+        'data_hora': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+        'url_base': url_base,
+        'total_testes': total_testes,
+        'testes_passaram': testes_passaram,
+        'testes_falharam': testes_falharam,
+        'url_testada': url_alvo
     }
-    resultados_json = json.dumps(resultados)
+    
+   
+    nome_arquivo = f"resultados_{resultados['data_hora']}.json"
+    caminho_completo_arquivo = logs_dir.joinpath(nome_arquivo)
 
-    # Imprimindo a string JSON
-    print(resultados_json)
+    with open(caminho_completo_arquivo, 'w') as arquivo:
+        json.dump(resultados, arquivo, indent=4)
 
+    print(f"\nResultados gravados em {caminho_completo_arquivo}")
+    #-------------------------Parte de obtenção dos dados---------------------------------------
 # Executar os testes
 if __name__ == "__main__":
     asyncio.run(executar_testes())
