@@ -3,6 +3,7 @@ import pathlib
 import sys
 import json
 from pathlib import Path
+import shutil  # Import necessário para remover diretórios
 
 logs_dir = Path('logs')
 
@@ -31,6 +32,22 @@ def display_welcome_message():
     choice = input("Escolha uma opção: ")
     return choice
 
+#Função para limpar as pastas logs se quiser..
+def limpar_pasta_logs():
+    try:
+        # Confirmação do usuário para limpar a pasta 'logs'
+        escolha_limpar = input("\nDeseja limpar a pasta de logs? (s/n): ").lower()
+        if escolha_limpar == 's':
+            shutil.rmtree(logs_dir)
+            print("Pasta de logs limpa com sucesso.")
+            logs_dir.mkdir()  # Recria a pasta 'logs' após a limpeza
+        elif escolha_limpar == 'n':
+            print("A pasta de logs não foi limpa.")
+        else:
+            print("Opção inválida. A pasta de logs não foi limpa.")
+    except Exception as e:
+        print(f"Erro ao limpar a pasta de logs: {e}")
+        
 def main():
     choice = display_welcome_message()
     if choice == '1':
@@ -84,3 +101,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # Função para perguntar ao usuário sobre a limpeza da pasta 'logs'
+    limpar_pasta_logs()
