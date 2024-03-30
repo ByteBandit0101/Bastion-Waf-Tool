@@ -1,6 +1,7 @@
 import requests
 import sys
 import os
+import time
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -29,7 +30,7 @@ def enviar_requisicao_e_verificar_resposta(dados_formulario, tipo_vulnerabilidad
     else:
         print(f"Teste #{teste_numero} FALHOU: Acesso potencialmente bloqueado ou vulnerabilidade não explorada.")
         return 0
-
+    
 campos_formulario = ['string_to_repeat', 'times_to_repeat_string']
 
 payloads = {
@@ -53,6 +54,7 @@ dados_formulario = {c: 'teste' for c in campos_formulario}
 dados_formulario['parametro_inesperado'] = 'valor_inesperado'
 total_testes += 1
 testes_passaram += enviar_requisicao_e_verificar_resposta(dados_formulario, 'Parameter Addition', 'parametro_inesperado', total_testes)
+time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
 
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")

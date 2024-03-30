@@ -2,6 +2,7 @@ import httpx
 import asyncio
 import sys
 from urllib.parse import quote
+import time
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -38,7 +39,7 @@ async def enviar_requisicao_e_verificar_resposta(payload, tipo_vulnerabilidade, 
         else:
             print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code}.")
             return 0
-
+        
 async def executar_testes():
     total_testes = 0
     testes_passaram = 0
@@ -51,7 +52,8 @@ async def executar_testes():
             testes_passaram += 1
         else:
             testes_falharam += 1
-
+        time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
+        
     print(f"\nTotal de Testes: {total_testes}")
     print(f"Testes Passaram: {testes_passaram}")
     print(f"Testes Falharam: {testes_falharam}")

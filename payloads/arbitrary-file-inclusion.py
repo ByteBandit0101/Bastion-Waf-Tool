@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import sys
 import os
+import time
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -45,7 +46,7 @@ def enviar_requisicao_e_verificar_resposta(url_completa, tipo_vulnerabilidade, t
     else:
         print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code}.")
         return 0
-
+    
 # Contadores para os resultados dos testes
 total_testes = 0
 testes_passaram = 0
@@ -61,7 +62,7 @@ for tipo_vulnerabilidade, payload in payloads.items():
         testes_passaram += 1
     else:
         testes_falharam += 1
-
+    time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
 # Reportar os resultados finais
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")

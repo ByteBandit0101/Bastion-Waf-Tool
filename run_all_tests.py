@@ -11,19 +11,15 @@ def run_test_script(script_path, url_base, taxa_envio):
     return completed_process.stdout
 def display_welcome_message():
     ascii_art = """
-    
      ____        _       ____                  _   _   
     |  _ \      | |     |  _ \                | (_) |  
     | |_) |_   _| |_ ___| |_) | __ _ _ __   __| |_| |_ 
     |  _ <| | | | __/ _ \  _ < / _` | '_ \ / _` | | __|
     | |_) | |_| | |_  __/ |_) | (_| | | | | (_| | | |_ 
     |____/ \__, |\__\___|____/ \__,_|_| |_|\__,_|_|\__|
-            __/ |                                      
-            |___/                                       
-    
-    
+            __/ |                       Made by               
+           |___/                                       
     """  
-
     print(ascii_art)
     print("Bem-vindo ao WaFBenchMulti!\n")
     print("1. Começar")

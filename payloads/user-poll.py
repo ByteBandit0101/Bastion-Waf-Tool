@@ -1,6 +1,7 @@
 import requests
 import sys
 import os
+import time
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -55,7 +56,7 @@ for tipo_vulnerabilidade, payload in payloads.items():
         testes_passaram += 1
     else:
         testes_falharam += 1
-
+    time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
 # Reportar os resultados finais
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")

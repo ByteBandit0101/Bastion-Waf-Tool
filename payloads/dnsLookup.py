@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import sys
 import os
 import requests
+import time
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
@@ -30,8 +31,8 @@ payloads = {
     'HTML Injection': "<h1>HTML Injection</h1>",
     'JavaScript Validation Bypass': "admin' --",
     'O/S Command injection': "127.0.0.1 && ls",
-    'Application Log Injection': "127.0.0.1\nInjected log entry",
-    # Note que a chave 'O/S Command injection' estava duplicada, considere dar nomes únicos
+    'Application Log Injection': "127.0.0.1\nInjected log entry"
+    # ADICIONE AQUI MAIS PAYLOADS SE PRECISAR
 }
 
 # Contadores para os resultados dos testes
@@ -57,7 +58,7 @@ for campo in campos_formulario:
         else:
             print(f"Teste #{total_testes} FALHOU: Código de status: {resposta_teste.status_code}.")
             testes_falharam += 1
-
+        time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
 # Reportar os resultados finais
 print(f"\nTotal de Testes: {total_testes}")
 print(f"Testes Passaram: {testes_passaram}")
