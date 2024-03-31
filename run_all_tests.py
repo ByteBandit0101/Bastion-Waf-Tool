@@ -27,8 +27,9 @@ def display_welcome_message():
     """  
     print(ascii_art)
     print("Bem-vindo ao WaFBenchMulti!\n")
-    print("1. Começar")
-    print("2. Sair")
+    print("1. Explorar Multilidae")
+    print("2. Explorar DVWA")
+    print("3. Sair")
     choice = input("Escolha uma opção: ")
     return choice
 
@@ -56,7 +57,7 @@ def main():
         # Solicitar a taxa de envio do usuário
         taxa_envio = input("Escolha a taxa de envio de requisições (baixo, medio, alto): ")
         # Caminho para o diretório contendo os scripts de teste
-        test_scripts_dir = pathlib.Path('./payloads')  # Atualize este caminho conforme necessário
+        test_scripts_dir = pathlib.Path('./payloads_Multilidae')  # Atualize este caminho conforme necessário
 
         # Lista para armazenar os resultados dos testes
         test_results = []
@@ -93,6 +94,48 @@ def main():
         print(f'Testes Falharam: {testes_falharam_agregados}')
         
     elif choice == '2':
+         # Solicitar a URL base do usuário
+        url_base = input("Por favor, insira a URL base: ")
+        # Solicitar a taxa de envio do usuário
+        taxa_envio = input("Escolha a taxa de envio de requisições (baixo, medio, alto): ")
+        # Caminho para o diretório contendo os scripts de teste
+        test_scripts_dir = pathlib.Path('./payloads_DVWA')  # Atualize este caminho conforme necessário
+
+        # Lista para armazenar os resultados dos testes
+        test_results = []
+        
+        # Variáveis para armazenar os totais agregados
+        total_testes_agregados = 0
+        testes_passaram_agregados = 0
+        testes_falharam_agregados = 0
+
+        # Iterando sobre cada script de teste e executando-o
+        for test_script in test_scripts_dir.glob('*.py'):
+            if test_script.name != 'run_all_tests.py':  # Ignorar o script principal
+                print(f'Executando: {test_script.name}')
+                # Passa a taxa de envio como argumento para cada script de teste
+                result = run_test_script(script_path=test_script, url_base=url_base, taxa_envio=taxa_envio)
+                test_results.append((test_script.name, result))
+
+        # Exibindo os resultados unicos
+        for script_name, result in test_results:
+            print(f'Resultado do {script_name}:\n{result}\n{"-"*60}\n')
+        
+        # Ler e resumir os resultados de todos os arquivos JSON gerados
+        padrao_nome_arquivo = f'resultados_{test_script.stem}_*.json'
+        for arquivo_resultado in logs_dir.glob(padrao_nome_arquivo):
+            with open(arquivo_resultado, 'r') as arquivo:
+                resultado = json.load(arquivo)
+                total_testes_agregados += resultado['total_testes']
+                testes_passaram_agregados += resultado['testes_passaram']
+                testes_falharam_agregados += resultado['testes_falharam']
+        # Após processar todos os arquivos, imprimir os totais agregados
+        print(f'\nResultados Agregados de Todos os Scripts:')
+        print(f'Total de Testes: {total_testes_agregados}')
+        print(f'Testes Passaram: {testes_passaram_agregados}')
+        print(f'Testes Falharam: {testes_falharam_agregados}')
+        
+    elif choice == '3':
         print("Saindo do WaFBenchMulti. Até mais!")
         sys.exit(0)
     else:
