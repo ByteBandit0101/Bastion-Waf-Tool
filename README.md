@@ -1,10 +1,11 @@
-<H1>Multilidae Waf Benchmark</H1>
+<H1>Waf Benchmark</H1>
 Made by <b>ByteBandit</b>
 
 <h1>Resumo da exploração</h1>
-<p>Basicamente a ferramenta irá executar scripts com payloads que exploram as vulnerabilidades existentes nas páginas:</p>
+<p>Basicamente a ferramenta irá executar scripts com payloads que exploram as vulnerabilidades existentes em páginas vulberaveis de aplicações de testes> DVWA e multilidae:</p>
   <section>
-        <h2>add-to-your-blog.php</h2>
+  <h1>Multilidae</h1>      
+  <h2>add-to-your-blog.php</h2>
         <ul>
             <li>SQL Injection on blog entry</li>
             <li>SQL Injection on logged in user name</li>
@@ -155,4 +156,54 @@ Made by <b>ByteBandit</b>
             <li>XML Injection</li>
             <li>Reflected Cross site scripting via XML Injection</li>
         </ul>
+
+  <h1>DVWA</h1> 
+  <h2>Brute Force</h2>
+    <ul></ul>
+
+  <h2>Command Injection</h2>
+    <ul></ul>
+
+  <h2>CSRF</h2>
+    <ul></ul>
+
+  <h2> File Inclusion</h2>
+    <ul></ul>
+
+  <h2>  File Upload</h2>
+    <ul></ul>
+
+  <h2>Insecure CAPTCHA </h2>
+    <ul></ul>
+
+  <h2>SQL Injection</h2>
+    <ul></ul>
+
+  <h2>SQL Injection (Blind)</h2>
+    <ul></ul>
+  
+  <h2>Weak Session IDs</h2>
+    <ul></ul>
+
+  <h2>XSS (DOM)</h2>
+    <ul></ul>
+  
+  <h2>XSS (Reflect)</h2>
+    <ul></ul>
+
+  <h2>XSS (Stored)</h2>
+    <ul></ul>
+
+  <h2>CSP Bypass</h2>
+    <ul></ul>
+
+  <h2>JavaScript</h2>
+    <ul></ul>
+
+  <h2>Authorisation Bypass</h2>
+    <ul></ul>
+
+  <h2>Open HTTP Redirect</h2>
+    <ul></ul>
+    
   </section>
