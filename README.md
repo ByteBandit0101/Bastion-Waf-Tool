@@ -1,4 +1,4 @@
-<H1>Waf Benchmark</H1>
+<H1>WAFHackProbe</H1>
 Made by <b>ByteBandit</b>
 
 <h1>Resumo da exploração</h1>
