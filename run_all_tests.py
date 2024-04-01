@@ -26,7 +26,7 @@ def display_welcome_message():
            |___/                                       
     """  
     print(ascii_art)
-    print("Bem-vindo ao WaFBenchMulti!\n")
+    print("Bem-vindo ao WAFHackProbe!\n")
     print("1. Explorar Multilidae")
     print("2. Explorar DVWA")
     print("3. Sair")
