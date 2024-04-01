@@ -19,7 +19,7 @@ else:
 delays = {'baixo': 7, 'medio': 2, 'alto': 0.5}
 delay = delays.get(taxa_envio, 2)  # Padrão é 'medio' se não especificado
 
-url_alvo = f"{{url_base}}/vulnerabilities/weak_session_ids"
+url_alvo = f"{{url_base}}DVWA/vulnerabilities/weak_session_ids"
 
 headers = {{
     "User-Agent": "Mozilla/5.0"

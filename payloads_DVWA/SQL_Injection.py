@@ -20,7 +20,7 @@ delays = {'baixo': 7, 'medio': 2, 'alto': 0.5}
 delay = delays.get(taxa_envio, 2)  # Usa 'medio' como padrão se a taxa não for reconhecida
 
 # Construir a URL alvo usando a URL base e o nome da página de Injeção de SQL
-url_alvo = f"{url_base}/vulnerabilities/sqli"
+url_alvo = f"{url_base}DVWA/vulnerabilities/sqli"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
