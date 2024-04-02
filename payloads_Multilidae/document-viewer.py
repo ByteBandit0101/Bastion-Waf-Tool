@@ -11,6 +11,7 @@ from pathlib import Path
 
 #diretório dos logs .json
 logs_dir = Path('logs')
+logs_dir.mkdir(exist_ok=True)#script para criar pasta log quando não existir
 
 if len(sys.argv) > 2:
     url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal

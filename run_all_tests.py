@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil  # Import necessário para remover diretórios
 
 logs_dir = Path('./logs')# diretório para fazer merge dos logs
+logs_dir.mkdir(exist_ok=True)#script para criar pasta log quando não existir
 
 def run_test_script(script_path, url_base, taxa_envio):
     # Comando para executar o script Python externo com a taxa de envio como argumento
@@ -125,16 +126,18 @@ def main():
         for script_name, result in test_results:
             print(f'Resultado do {script_name}:\n{result}\n{"-"*60}\n')
         
+        # Use um padrão mais geral para encontrar todos os arquivos de resultados
+        padrao_nome_arquivo = 'resultados_*.json'
+
         # Ler e resumir os resultados de todos os arquivos JSON gerados
-        padrao_nome_arquivo = f'resultados_{test_script.stem}_*.json'
         for arquivo_resultado in logs_dir.glob(padrao_nome_arquivo):
             with open(arquivo_resultado, 'r') as arquivo:
                 resultado = json.load(arquivo)
                 total_testes_agregados += resultado['total_testes']
                 testes_passaram_agregados += resultado['testes_passaram']
                 testes_falharam_agregados += resultado['testes_falharam']
-                
-        # Após processar todos os arquivos, imprimir os totais agregados
+
+        # Imprimir os totais agregados
         print(f'\nResultados Agregados de Todos os Scripts:')
         print(f'Total de Testes: {total_testes_agregados}')
         print(f'Testes Passaram: {testes_passaram_agregados}')
