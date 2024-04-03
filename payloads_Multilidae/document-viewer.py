@@ -9,28 +9,28 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-#diretório dos logs .json
+# JSON log directory
 logs_dir = Path('logs')
-logs_dir.mkdir(exist_ok=True)#script para criar pasta log quando não existir
+logs_dir.mkdir(exist_ok=True)  # Script to create log folder when it does not exist
 
 if len(sys.argv) > 2:
-    url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
-    taxa_envio = sys.argv[2]  # Recebe a taxa de envio como segundo argumento
+    base_url = sys.argv[1]  # Receives the base URL as the main code argument
+    send_rate = sys.argv[2]  # Receives the send rate as the second argument
 else:
-    print("URL base e/ou taxa de envio não foram fornecidas.")
+    print("Base URL and/or send rate not provided.")
     sys.exit(1)
 
-# Mapeia a taxa de envio para um intervalo de tempo específico
-delays = {'baixo': 7, 'medio': 2, 'alto': 0.5}
-delay = delays.get(taxa_envio, 2)  # Usa 'medio' como padrão se a taxa não for reconhecida
+# Maps the send rate to a specific time interval
+delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delay = delays.get(send_rate, 2)  # Uses 'medium' as default if the rate is not recognized
 
-url_alvo = f"{url_base}/index.php?page=document-viewer.php"
-print(url_alvo)
+target_url = f"{base_url}/index.php?page=document-viewer.php"
+print(target_url)
 headers_base = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
 
-# Payloads para testar
+# Payloads to test
 payloads = {
     'Cross Site Scripting': "<script>alert('XSS')</script>",
     'HTML Injection': "<h1>HTML Injection</h1>",
@@ -38,63 +38,62 @@ payloads = {
     'Frame Source Injection': "<iframe src='http://google.com'></iframe>",
 }
 
-# Função assíncrona para enviar a requisição e verificar a resposta
-async def enviar_requisicao_e_verificar_resposta(payload, tipo_vulnerabilidade, teste_numero):
-    url_completa = f"{url_alvo}&file={quote(payload)}"  # Usando quote para codificar o payload
+# Asynchronous function to send the request and check the response
+async def send_request_and_check_response(payload, vulnerability_type, test_number):
+    complete_url = f"{target_url}&file={quote(payload)}"  # Using quote to encode the payload
     async with httpx.AsyncClient(http2=True) as client:
-        resposta_teste = await client.get(url_completa, headers=headers_base)
-        soup = BeautifulSoup(resposta_teste.text, 'html.parser')
-        titulo = soup.find('title').string if soup.find('title') else ''
+        test_response = await client.get(complete_url, headers=headers_base)
+        soup = BeautifulSoup(test_response.text, 'html.parser')
+        title = soup.find('title').string if soup.find('title') else ''
 
-        print(f"Teste {teste_numero}: Testando '{tipo_vulnerabilidade}'. Código de status: {resposta_teste.status_code}, Título: {titulo}")
+        print(f"Test {test_number}: Testing '{vulnerability_type}'. Status code: {test_response.status_code}, Title: {title}")
 
-        if resposta_teste.status_code == 200:
-            print(f"Teste #{teste_numero} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' possivelmente encontrada!")
+        if test_response.status_code == 200:
+            print(f"Test #{test_number} PASSED: Possible vulnerability '{vulnerability_type}' found!")
             return 1
         else:
-            print(f"Teste #{teste_numero} FALHOU: Código de status: {resposta_teste.status_code}.")
+            print(f"Test #{test_number} FAILED: Status code: {test_response.status_code}.")
             return 0
 
-# Função principal para executar os testes
-async def executar_testes():
-    total_testes = 0
-    testes_passaram = 0
-    testes_falharam = 0
+# Main function to execute the tests
+async def execute_tests():
+    total_tests = 0
+    tests_passed = 0
+    tests_failed = 0
 
-    for tipo_vulnerabilidade, payload in payloads.items():
-        total_testes += 1
-        resultado_teste = await enviar_requisicao_e_verificar_resposta(payload, tipo_vulnerabilidade, total_testes)
-        if resultado_teste == 1:
-            testes_passaram += 1
+    for vulnerability_type, payload in payloads.items():
+        total_tests += 1
+        test_result = await send_request_and_check_response(payload, vulnerability_type, total_tests)
+        if test_result == 1:
+            tests_passed += 1
         else:
-            testes_falharam += 1
-        time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
-    # Reportar os resultados finais
-    print(f"\nTotal de Testes: {total_testes}")
-    print(f"Testes Passaram: {testes_passaram}")
-    print(f"Testes Falharam: {testes_falharam}")
-    print(f"Url Testada: {url_alvo}")
+            tests_failed += 1
+        time.sleep(delay)  # Adds a pause between requests based on the send rate
+    # Reporting final results
+    print(f"\nTotal Tests: {total_tests}")
+    print(f"Tests Passed: {tests_passed}")
+    print(f"Tests Failed: {tests_failed}")
+    print(f"Tested URL: {target_url}")
     
-    #-------------------------Parte de obtenção dos dados---------------------------------------
-    # Gravar os resultados em um arquivo JSON na pasta 'logs'
-    resultados = {
-        'data_hora': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
-        'url_base': url_base,
-        'total_testes': total_testes,
-        'testes_passaram': testes_passaram,
-        'testes_falharam': testes_falharam,
-        'url_testada': url_alvo
+    # Data retrieval part
+    # Record the results in a JSON file in the 'logs' folder
+    results = {
+        'date_time': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+        'base_url': base_url,
+        'total_tests': total_tests,
+        'tests_passed': tests_passed,
+        'tests_failed': tests_failed,
+        'tested_url': target_url
     }
     
-   
-    nome_arquivo = f"resultados_{resultados['data_hora']}.json"
-    caminho_completo_arquivo = logs_dir.joinpath(nome_arquivo)
+    file_name = f"results_{results['date_time']}.json"
+    full_file_path = logs_dir.joinpath(file_name)
 
-    with open(caminho_completo_arquivo, 'w') as arquivo:
-        json.dump(resultados, arquivo, indent=4)
+    with open(full_file_path, 'w') as file:
+        json.dump(results, file, indent=4)
 
-    print(f"\nResultados gravados em {caminho_completo_arquivo}")
-    #-------------------------Parte de obtenção dos dados---------------------------------------
-# Executar os testes
+    print(f"\nResults recorded in {full_file_path}")
+    # Data retrieval part
+# Execute the tests
 if __name__ == "__main__":
-    asyncio.run(executar_testes())
+    asyncio.run(execute_tests())

