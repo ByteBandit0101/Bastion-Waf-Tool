@@ -24,7 +24,6 @@ delay = delays.get(sending_rate, 2)  # Uses 'medium' as default if the rate is n
 
 # Build the target URL using the base URL and the page name
 target_url = f"{base_url}/index.php?page=arbritary-file-inclusion.php"
-print(target_url)
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
@@ -59,39 +58,55 @@ total_tests = 0
 tests_passed = 0
 tests_failed = 0
 
+# Detailed test results list
+detailed_results = []
+
 # Perform the tests
 for vulnerability_type, payload in payloads.items():
     total_tests += 1
     payload_encoded = requests.utils.quote(payload)
     complete_url = f"{target_url}&page={payload_encoded}"
-    test_result = send_request_and_verify_response(complete_url, vulnerability_type, total_tests)
-    if test_result == 1:
+    test_response = requests.get(complete_url, headers=headers)
+
+    test_result = {
+        'vulnerability_type': vulnerability_type,
+        'payload': payload,
+        'status_code': test_response.status_code,
+        'passed': test_response.status_code == 200
+    }
+    detailed_results.append(test_result)
+
+    if test_response.status_code == 200:
+        print(f"Test #{total_tests} PASSED: Possible '{vulnerability_type}' vulnerability found!")
         tests_passed += 1
     else:
+        print(f"Test #{total_tests} FAILED: Status code: {test_response.status_code}.")
         tests_failed += 1
+
     time.sleep(delay)  # Adds a pause between requests based on the sending rate
 
-# Report the final results
-print(f"\nTotal Tests: {total_tests}")
-print(f"Tests Passed: {tests_passed}")
-print(f"Tests Failed: {tests_failed}")
-print(f"Tested URL: {target_url}")
-
-#-------------------------Data retrieval part--------------------------------------- 
-# Record the results in a JSON file
-results = {
-    'date_time': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
-    'base_url': base_url,
-    'total_tests': total_tests,
-    'tests_passed': tests_passed,
-    'tests_failed': tests_failed,
-    'tested_url': target_url
+# Prepare final log structure
+final_log = {
+    'summary': {
+        'date_time': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+        'base_url': base_url,
+        'total_tests': total_tests,
+        'tests_passed': tests_passed,
+        'tests_failed': tests_failed,
+        'tested_url': target_url
+    },
+    'detailed_results': detailed_results
 }
 
-file_name = f"results_{results['date_time']}.json"
-complete_file_path = logs_dir.joinpath(file_name)
+# Get the name of the current script without the extension
+script_name = os.path.splitext(os.path.basename(__file__))[0]
 
-with open(complete_file_path, 'w') as file:
-    json.dump(results, file, indent=4)
+# Save final log to a JSON file
+date_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_name = f"results_{script_name}_{date_time}.json"
+full_file_path = logs_dir.joinpath(file_name)
 
-print(f"\nResults recorded in {complete_file_path}")
+with open(full_file_path, 'w') as file:
+    json.dump(final_log, file, indent=4)
+
+print(f"\nFinal results saved in {full_file_path}")
