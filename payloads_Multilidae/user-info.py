@@ -77,10 +77,13 @@ results = {
     'tested_url': target_url
 }
 
-file_name = f"results_{results['date_time']}.json"
+# Get the name of the current script
+script_name = os.path.splitext(os.path.basename(__file__))[0]
+
+file_name = f"results_{script_name}_{results['date_time']}.json"
 full_file_path = logs_dir.joinpath(file_name)
 
 with open(full_file_path, 'w') as file:
     json.dump(results, file, indent=4)
 
-print(f"\nResults recorded in {full_file_path}")
+print(f"\nResults saved in {full_file_path}")

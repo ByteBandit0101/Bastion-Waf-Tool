@@ -49,14 +49,10 @@ total_tests = 0
 tests_passed = 0
 tests_failed = 0
 
-# Detailed test results list
-detailed_results = []
-
 # Perform tests
 for field in form_fields:
     for vulnerability_type, payload in payloads.items():
         form_data = {f: 'test' for f in form_fields}  # All fields with 'test'
-        form_data[field] = payload  # Current field with the payload
         
         # Specify which field should receive the payload, if necessary
         if "in Blog Input Field" in vulnerability_type:
@@ -65,16 +61,6 @@ for field in form_fields:
             specific_field = field
 
         form_data[specific_field] = payload  # Current field with the payload
-        
-        test_response = requests.post(target_url, data=form_data, headers=headers)
-        test_detail = {
-            'field': field,
-            'vulnerability': vulnerability_type,
-            'status_code': test_response.status_code,
-            'payload': payload,
-            'passed': test_response.status_code == 200
-        }
-        detailed_results.append(test_detail)
 
         total_tests += 1
 
@@ -91,41 +77,30 @@ for field in form_fields:
 
         time.sleep(delay)  # Add a pause between requests based on request rate
 
-#-------------------------Part for data acquisition--------------------------------------- 
-# Aggregate results
-total_tests = len(detailed_results)
-tests_passed = sum(result['passed'] for result in detailed_results)
-tests_failed = total_tests - tests_passed
+# Report final results
+print(f"\nTotal Tests: {total_tests}")
+print(f"Tests Passed: {tests_passed}")
+print(f"Tests Failed: {tests_failed}")
+print(f"Tested URL: {target_url}")
 
-# Prepare final log structure
-final_log = {
-    'summary': {
-        'date_time': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
-        'base_url': base_url,
-        'total_tests': total_tests,
-        'tests_passed': tests_passed,
-        'tests_failed': tests_failed,
-        'tested_url': target_url
-    },
-    'detailed_results': detailed_results
+#-------------------------Part for data acquisition--------------------------------------- 
+# Save results to a JSON file
+results = {
+    'date_time': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+    'base_url': base_url,
+    'total_tests': total_tests,
+    'tests_passed': tests_passed,
+    'tests_failed': tests_failed,
+    'tested_url': target_url
 }
 
 # Get the name of the current script
 script_name = os.path.splitext(os.path.basename(__file__))[0]
 
-# Save final log to a JSON file
-date_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-file_name = f"results_{script_name}_{date_time}.json"
+file_name = f"results_{script_name}_{results['date_time']}.json"
 full_file_path = logs_dir.joinpath(file_name)
 
 with open(full_file_path, 'w') as file:
-    json.dump(final_log, file, indent=4)
+    json.dump(results, file, indent=4)
 
-print(f"\nFinal results saved in {full_file_path}")
-
-# Print summary of results
-print(f"\nTotal Tests: {total_tests}")
-print(f"Tests Passed: {tests_passed}")
-print(f"Tests Failed: {tests_failed}")
-print(f"Tested URL: {target_url}")
-print(f"log available at : {file_name}")
+print(f"\nResults saved in {full_file_path}")

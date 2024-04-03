@@ -8,6 +8,7 @@ import time
 import json
 from datetime import datetime
 from pathlib import Path
+import os
 
 # JSON log directory
 logs_dir = Path('logs')
@@ -86,14 +87,16 @@ async def execute_tests():
         'tested_url': target_url
     }
     
-    file_name = f"results_{results['date_time']}.json"
+    # Get the name of the current script
+    script_name = os.path.splitext(os.path.basename(__file__))[0]
+
+    file_name = f"results_{script_name}_{results['date_time']}.json"
     full_file_path = logs_dir.joinpath(file_name)
 
     with open(full_file_path, 'w') as file:
         json.dump(results, file, indent=4)
 
-    print(f"\nResults recorded in {full_file_path}")
-    # Data retrieval part
-# Execute the tests
+    print(f"\nResults saved in {full_file_path}")
+    
 if __name__ == "__main__":
     asyncio.run(execute_tests())
