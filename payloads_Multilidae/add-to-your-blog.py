@@ -49,6 +49,7 @@ total_tests = 0
 tests_passed = 0
 tests_failed = 0
 
+detailed_tests = []
 # Perform tests
 for field in form_fields:
     for vulnerability_type, payload in payloads.items():
@@ -66,6 +67,16 @@ for field in form_fields:
 
         # Send the request
         test_response = requests.post(target_url, data=form_data, headers=headers)
+        
+        test_detail = {
+            'field': field,
+            'vulnerability_type': vulnerability_type,
+            'payload': payload,
+            'passed': test_response.status_code == 200,
+            'status_code': test_response.status_code
+        }
+        detailed_tests.append(test_detail)
+        
 
         # Check if the test was successful using the status code
         if test_response.status_code == 200:
@@ -91,7 +102,8 @@ results = {
     'total_tests': total_tests,
     'tests_passed': tests_passed,
     'tests_failed': tests_failed,
-    'tested_url': target_url
+    'tested_url': target_url,
+    'detailed_tests': detailed_tests
 }
 
 # Get the name of the current script
