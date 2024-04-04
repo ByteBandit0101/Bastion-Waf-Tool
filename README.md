@@ -10,6 +10,7 @@ Made by <b>ByteBandit</b>
 
 <p>This automated approach not only saves significant time that would otherwise be spent on manual testing but also provides a quantitative metric on the effectiveness of WAFs in protecting web applications against known exploitation attempts. This tool can be extremely useful for organizations looking to strengthen their cyber defenses by evaluating different WAF solutions before making a large-scale implementation.</p>
   <section>
+  <h1>Exploited vulnerabilities</h1>
   <h1>Multilidae</h1>      
   <h2>add-to-your-blog.php</h2>
         <ul>
