@@ -39,6 +39,14 @@ def send_request_and_verify_response(complete_url, vulnerability_type, test_numb
     test_response = requests.get(complete_url, headers=headers)
     print(f"Test {test_number}: Testing '{vulnerability_type}'. Status code: {test_response.status_code}")
     
+    test_detail = {
+        'vulnerability_type': vulnerability_type,
+        'payload': payload,
+        'passed': test_response.status_code == 200,
+        'status_code': test_response.status_code
+    }
+    detailed_tests.append(test_detail)
+    
     if test_response.status_code == 200 and "Access Blocked" not in test_response.text:
         print(f"Test #{test_number} PASSED: Possible '{vulnerability_type}' vulnerability found!")
         return 1
@@ -49,6 +57,8 @@ def send_request_and_verify_response(complete_url, vulnerability_type, test_numb
 total_tests = 0
 tests_passed = 0
 tests_failed = 0
+
+detailed_tests = []
 
 for vulnerability_type, payload in payloads.items():
     total_tests += 1
@@ -75,7 +85,8 @@ results = {
     'total_tests': total_tests,
     'tests_passed': tests_passed,
     'tests_failed': tests_failed,
-    'tested_url': target_url
+    'tested_url': target_url,
+    'detailed_tests': detailed_tests  # Incluindo os detalhes dos testes
 }
 
 # Get the name of the current script

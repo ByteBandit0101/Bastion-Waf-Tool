@@ -29,6 +29,16 @@ headers = {
 
 def send_request_and_check_response(form_data, vulnerability_type, field, test_number):
     test_response = requests.post(target_url, data=form_data, headers=headers)
+    
+    test_detail = {
+        'field': field,
+        'vulnerability_type': vulnerability_type,
+        'payload': payload,
+        'passed': test_response.status_code == 200,
+        'status_code': test_response.status_code
+    }
+    detailed_tests.append(test_detail)
+    
     print(f"Test {test_number}: Field '{field}' with payload '{vulnerability_type}'. Status code: {test_response.status_code}")
     
     if test_response.status_code == 200 and "Access Blocked" not in test_response.text:
@@ -48,6 +58,7 @@ payloads = {
 
 total_tests = 0
 tests_passed = 0
+detailed_tests = []
 
 for field in form_fields:
     for vulnerability_type, payload in payloads.items():
@@ -57,12 +68,12 @@ for field in form_fields:
         total_tests += 1
         tests_passed += send_request_and_check_response(form_data, vulnerability_type, field, total_tests)
 
-form_data = {c: 'test' for c in form_fields}
-form_data['unexpected_parameter'] = 'unexpected_value'
-total_tests += 1
-tests_passed += send_request_and_check_response(form_data, 'Parameter Addition', 'unexpected_parameter', total_tests)
+        form_data = {c: 'test' for c in form_fields}
+        form_data['unexpected_parameter'] = 'unexpected_value'
+        total_tests += 1
+        tests_passed+= send_request_and_check_response(form_data, 'Parameter Addition', 'unexpected_parameter', total_tests)
 
-time.sleep(delay)  # Adds a pause between requests based on the send rate
+        time.sleep(delay)  # Adds a pause between requests based on the send rate
 
 print(f"\nTotal Tests: {total_tests}")
 print(f"Tests Passed: {tests_passed}")
@@ -77,7 +88,8 @@ results = {
     'total_tests': total_tests,
     'tests_passed': tests_passed,
     'tests_failed': total_tests - tests_passed,
-    'tested_url': target_url
+    'tested_url': target_url,
+    'detailed_tests': detailed_tests  # Incluindo os detalhes dos testes
 }
 
 # Get the name of the current script

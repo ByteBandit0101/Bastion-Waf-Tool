@@ -46,10 +46,10 @@ def send_request_and_verify_response(complete_url, vulnerability_type, test_numb
     
     if test_response.status_code == 200:
         print(f"Test #{test_number} PASSED: Possible vulnerability of '{vulnerability_type}' found!")
-        return 1
+        return 1, test_response
     else:
         print(f"Test #{test_number} FAILED: Status code: {test_response.status_code} or 'Access Denied' title found.")
-        return 0
+        return 0, test_response
     
 # Function to debug the response
 #def debug_response(response, test_number):
@@ -65,16 +65,27 @@ total_tests = 0
 tests_passed = 0
 tests_failed = 0
 
+detailed_tests = []
+
 # Perform the tests
 for vulnerability_type, payload in payloads.items():
     total_tests += 1
     payload_encoded = requests.utils.quote(payload)
     complete_url = f"{target_url}&xml={payload_encoded}&xml-validator-php-submit-button=Validate+XML"
-    test_result = send_request_and_verify_response(complete_url, vulnerability_type, total_tests)
+    test_result, test_response = send_request_and_verify_response(complete_url, vulnerability_type, total_tests)
     if test_result == 1:
         tests_passed += 1
     else:
         tests_failed += 1
+        
+    test_detail = {
+        'vulnerability_type': vulnerability_type,
+        'payload': payload,
+        'passed': test_result == 1,
+        'status_code': test_response.status_code
+    }
+    detailed_tests.append(test_detail)
+    
     time.sleep(delay)  # Adds a pause between requests based on the send rate
 
 # Report the final results
@@ -91,7 +102,8 @@ results = {
     'total_tests': total_tests,
     'tests_passed': tests_passed,
     'tests_failed': tests_failed,
-    'tested_url': target_url
+    'tested_url': target_url,
+    'detailed_tests': detailed_tests  # Incluindo os detalhes dos testes
 }
 
 # Get the name of the current script

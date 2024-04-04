@@ -42,6 +42,8 @@ total_tests = 0
 tests_passed = 0
 tests_failed = 0
 
+detailed_tests = []
+
 # Conducting tests
 for field in form_fields:
     for vulnerability_type, payload in payloads.items():
@@ -64,6 +66,16 @@ for field in form_fields:
         else:
             print(f"Test #{total_tests} FAILED: Status code: {test_response.status_code} or blocked access.")
             tests_failed += 1
+            
+        test_detail = {
+        'field': field,
+        'vulnerability_type': vulnerability_type,
+        'payload': payload,
+        'passed': test_response.status_code == 200,
+        'status_code': test_response.status_code
+        }
+        detailed_tests.append(test_detail)
+        
         time.sleep(delay)  # Adds a pause between requests based on the send rate
 
 # Reporting final results
@@ -80,7 +92,8 @@ results = {
     'total_tests': total_tests,
     'tests_passed': tests_passed,
     'tests_failed': tests_failed,
-    'tested_url': target_url
+    'tested_url': target_url,
+    'detailed_tests': detailed_tests  # Incluindo os detalhes dos testes
 }
 
 # Get the name of the current script
