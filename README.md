@@ -1,8 +1,14 @@
 <H1>WAFHackProbe</H1>
 Made by <b>ByteBandit</b>
 
-<h1>Resumo da exploração</h1>
-<p>Basicamente a ferramenta irá executar scripts com payloads que exploram as vulnerabilidades existentes em páginas vulberaveis de aplicações de testes> DVWA e multilidae:</p>
+<h1>About the tool</h1>
+<p>The WAFHackProbe is designed to automate testing on vulnerable applications, such as OWASP's DVWA (Damn Vulnerable Web Application) and Mutillidae, serves as a benchmarking mechanism for Web Application Firewalls (WAFs). This tool operates by sending a series of carefully crafted payloads known to exploit specific vulnerabilities in these test applications. During these tests, the tool evaluates the applications' responses to each payload sent.</p>
+
+<p>The underlying logic of this tool is straightforward yet effective: it attempts to exploit known vulnerabilities in these applications and monitors how the responses are handled by both the applications and, more crucially, by the WAFs implemented to protect them. When a payload results in a successful exploitation (i.e., the attack "was successful"), it indicates that the WAF failed to block the exploitation attempt, and the tool records this event as a failure in the protection offered by the WAF.</p>
+
+<p>Conversely, if the WAF manages to identify and block the exploitation attempt, preventing the payload from causing any harm or gaining unauthorized access, the tool records this as a success for the WAF ("WAF blocked it"). This continuous testing process allows for a comparative assessment of the effectiveness of different WAFs in protecting against a standardized set of known attacks.</p>
+
+<p>This automated approach not only saves significant time that would otherwise be spent on manual testing but also provides a quantitative metric on the effectiveness of WAFs in protecting web applications against known exploitation attempts. This tool can be extremely useful for organizations looking to strengthen their cyber defenses by evaluating different WAF solutions before making a large-scale implementation.</p>
   <section>
   <h1>Multilidae</h1>      
   <h2>add-to-your-blog.php</h2>
