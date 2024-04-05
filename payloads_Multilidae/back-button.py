@@ -39,19 +39,12 @@ payloads = {
 def send_request_and_verify_response(complete_url, vulnerability_type, test_number):
     test_response = requests.get(complete_url, headers=headers)
     
-    test_detail = {
-        'vulnerability_type': vulnerability_type,
-        'payload': payload,
-        'passed': test_result == 1,
-        'status_code': test_response.status_code
-    }
-    detailed_tests.append(test_detail)
     soup = BeautifulSoup(test_response.text, 'html.parser')
     title = soup.find('title').text if soup.find('title') else ''
 
     print(f"Test {test_number}: Testing '{vulnerability_type}'. Title: {title[:46]}")
     
-    if test_response.status_code == 200 or 201 or 202 or 204:
+    if test_response.status_code in (200, 201, 202, 204):
         print(f"Test #{test_number} PASSED: Possible vulnerability of '{vulnerability_type}' found!")
         return 1, test_response
     else:
@@ -85,6 +78,14 @@ for vulnerability_type, payload in payloads.items():
     else:
         tests_failed += 1
     
+    
+    test_detail = {
+        'vulnerability_type': vulnerability_type,
+        'payload': payload,
+        'passed': test_result == 1,
+        'status_code': test_response.status_code
+    }
+    detailed_tests.append(test_detail)
     time.sleep(delay)  # Adds a pause between requests based on the send rate
 
 # Report the final results

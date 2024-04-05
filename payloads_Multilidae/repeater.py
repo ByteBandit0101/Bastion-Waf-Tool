@@ -34,14 +34,14 @@ def send_request_and_check_response(form_data, vulnerability_type, field, test_n
         'field': field,
         'vulnerability_type': vulnerability_type,
         'payload': payload,
-        'passed': test_response.status_code == 200,
+        'passed': test_response.status_code in (200, 201, 202, 204),
         'status_code': test_response.status_code
     }
     detailed_tests.append(test_detail)
     
     print(f"Test {test_number}: Field '{field}' with payload '{vulnerability_type}'. Status code: {test_response.status_code}")
     
-    if test_response.status_code == 200 or 201 or 202 or 204 and "Access Blocked" not in test_response.text:
+    if test_response.status_code in (200, 201, 202, 204) and "Access Blocked" not in test_response.text:
         print(f"Test #{test_number} PASSED: Potential vulnerability '{vulnerability_type}' found!")
         return 1
     else:

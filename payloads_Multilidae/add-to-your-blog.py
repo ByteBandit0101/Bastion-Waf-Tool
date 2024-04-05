@@ -79,7 +79,7 @@ for field in form_fields:
         
 
         # Check if the test was successful using the status code
-        if test_response.status_code == 200 or 201 or 202 or 204:
+        if test_response.status_code in (200, 201, 202, 204):
             print(f"Test #{total_tests} PASSED: Vulnerability '{vulnerability_type}' possibly found in field '{specific_field}'!")
             tests_passed += 1
         else:

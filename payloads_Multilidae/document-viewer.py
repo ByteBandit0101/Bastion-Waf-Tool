@@ -50,7 +50,7 @@ async def send_request_and_check_response(payload, vulnerability_type, test_numb
 
         print(f"Test {test_number}: Testing '{vulnerability_type}'. Status code: {test_response.status_code}, Title: {title}")
 
-        if test_response.status_code == 200 or 201 or 202 or 204:
+        if test_response.status_code in (200, 201, 202, 204):
             print(f"Test #{test_number} PASSED: Possible vulnerability '{vulnerability_type}' found!")
             return 1, test_response
         else:

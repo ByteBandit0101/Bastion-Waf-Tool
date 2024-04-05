@@ -63,14 +63,14 @@ for field in form_fields:
             'field': field,
             'vulnerability_type': vulnerability_type,
             'payload': payload,
-            'passed': test_response.status_code == 200,
+            'passed': test_response.status_code in (200, 201, 202, 204),
             'status_code': test_response.status_code
         }
         detailed_tests.append(test_detail)
 
         print(f"Test {total_tests}: Field '{field}' with payload '{payload}'. Status code: {test_response.status_code}")
 
-        if test_response.status_code == 200 or 201 or 202 or 204:
+        if test_response.status_code in (200, 201, 202, 204):
             print(f"Test #{total_tests} PASSED: Possible vulnerability '{vulnerability_type}' found in field '{field}'!")
             tests_passed += 1
         else:

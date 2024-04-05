@@ -4,6 +4,11 @@ import sys
 import json
 from pathlib import Path
 import shutil  # Necessary import for removing directories
+import datetime
+import zipfile
+import tkinter as tk
+from tkinter import filedialog
+import os
 
 logs_dir = Path('./logs')  # Directory for merging logs
 logs_dir.mkdir(exist_ok=True)  # Script to create the log folder if it does not exist
@@ -39,17 +44,43 @@ def display_welcome_message():
 def clear_logs_folder():
     try:
         # User confirmation to clear the 'logs' folder
-        clear_choice = input("\nDo you want to clear the logs folder? (y/n): ").lower()
-        if clear_choice == 'y':
+        clear_choice = input("\nDo you want to clear the logs folder or save? (clear/save): ").lower()
+        if clear_choice == 'clear':
             shutil.rmtree(logs_dir)
             print("Logs folder successfully cleared.")
             logs_dir.mkdir()  # Recreate the 'logs' folder after clearing
-        elif clear_choice == 'n':
-            print("Logs folder was not cleared.")
+        elif clear_choice == 'save':
+            today = datetime.date.today()  # Get today's date
+            zip_name = f"log_{today.strftime('%d-%m-%Y_%H-%M-%S')}.zip"  # Name the zip file with today's date
+
+            # Create a zip file and add the logs directory
+            with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for root, dirs, files in os.walk(logs_dir):
+                    for file in files:
+                        zipf.write(os.path.join(root, file),
+                                   os.path.relpath(os.path.join(root, file),
+                                                   os.path.join(logs_dir, '..')))
+
+            print(f"Logs folder was not cleared. Contents zipped to: {zip_name}")
+
+            # Ask user where to save the zip file
+            root = tk.Tk()
+            root.withdraw()  # Hide the main window
+            save_path = filedialog.asksaveasfilename(defaultextension=".zip", initialfile=zip_name)
+            if save_path:  # If a save path was chosen
+                shutil.move(zip_name, save_path)
+                print(f"Zip file saved to: {save_path}")
+                
+                # Clear the logs folder after zipping
+                shutil.rmtree(logs_dir)  # Remove the logs folder and its contents
+                logs_dir.mkdir()  # Recreate the logs folder, now empty
+            else:
+                print("Zip file save cancelled. File is located in the current directory.")
+
         else:
             print("Invalid option. Logs folder was not cleared.")
     except Exception as e:
-        print(f"Error clearing logs folder: {e}")
+        print(f"Error handling logs folder: {e}")
         
 def main():
     choice = display_welcome_message()
