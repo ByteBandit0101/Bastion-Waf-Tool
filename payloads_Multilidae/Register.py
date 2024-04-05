@@ -52,7 +52,7 @@ for field in form_fields:
         print(f"Test {total_tests}: Field '{field}' with payload '{payload}'. Status code: {test_response.status_code}")
 
         # Checks if the test was successful based on the status code
-        if test_response.status_code == 200 and "Registration failed" not in test_response.text:
+        if test_response.status_code == 200 or 201 or 202 or 204 and "Registration failed" not in test_response.text:
             print(f"Test #{total_tests} PASSED: Possible vulnerability '{vulnerability_type}' found in field '{field}'!")
             tests_passed += 1
         else:
@@ -63,7 +63,7 @@ for field in form_fields:
             'field': field,
             'vulnerability_type': vulnerability_type,
             'payload': payload,
-            'passed': test_response.status_code == 200,
+            'passed': test_response.status_code == 200 or 201 or 202 or 204,
             'status_code': test_response.status_code
         }
         detailed_tests.append(test_detail)

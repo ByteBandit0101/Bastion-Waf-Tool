@@ -49,7 +49,7 @@ def send_request_and_check_response(complete_url, vulnerability_type, test_numbe
     }
     detailed_tests.append(test_detail)
     
-    if test_response.status_code == 200 and "Access Blocked" not in test_response.text:
+    if test_response.status_code == 200 or 201 or 202 or 204 and "Access Blocked" not in test_response.text:
         print(f"Test #{test_number} PASSED: Vulnerability '{vulnerability_type}' potentially found!")
         return 1
     else:

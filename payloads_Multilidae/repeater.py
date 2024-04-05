@@ -41,7 +41,7 @@ def send_request_and_check_response(form_data, vulnerability_type, field, test_n
     
     print(f"Test {test_number}: Field '{field}' with payload '{vulnerability_type}'. Status code: {test_response.status_code}")
     
-    if test_response.status_code == 200 and "Access Blocked" not in test_response.text:
+    if test_response.status_code == 200 or 201 or 202 or 204 and "Access Blocked" not in test_response.text:
         print(f"Test #{test_number} PASSED: Potential vulnerability '{vulnerability_type}' found!")
         return 1
     else:

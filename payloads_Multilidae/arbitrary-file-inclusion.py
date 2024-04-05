@@ -48,7 +48,7 @@ def send_request_and_verify_response(complete_url, vulnerability_type, test_numb
 
     print(f"Test {test_number}: Testing '{vulnerability_type}'. Status code: {test_response.status_code}")
     
-    if test_response.status_code == 200:
+    if test_response.status_code == 200 or 201 or 202 or 204:
         print(f"Test #{test_number} PASSED: Possible '{vulnerability_type}' vulnerability found!")
         return 1, test_response
     else:

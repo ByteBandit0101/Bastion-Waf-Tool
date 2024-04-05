@@ -70,7 +70,7 @@ for field in form_fields:
 
         print(f"Test {total_tests}: Field '{field}' with payload '{payload}'. Status code: {test_response.status_code}")
 
-        if test_response.status_code == 200:
+        if test_response.status_code == 200 or 201 or 202 or 204:
             print(f"Test #{total_tests} PASSED: Possible vulnerability '{vulnerability_type}' found in field '{field}'!")
             tests_passed += 1
         else:
