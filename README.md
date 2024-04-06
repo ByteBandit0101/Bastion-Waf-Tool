@@ -1,4 +1,5 @@
-<H1>WAFHackProbe</H1>
+<H1>Bastion: A Tool for WAF Evaluation</H1>
+
 Made by <b>ByteBandit</b>
 
 <h1>About the tool</h1>
