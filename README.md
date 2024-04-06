@@ -3,7 +3,7 @@
 Made by <b>ByteBandit</b>
 
 <h1>About the tool</h1>
-<p>The WAFHackProbe is designed to automate testing on vulnerable applications, such as OWASP's DVWA (Damn Vulnerable Web Application) and Mutillidae, serves as a benchmarking mechanism for Web Application Firewalls (WAFs). This tool operates by sending a series of carefully crafted payloads known to exploit specific vulnerabilities in these test applications. During these tests, the tool evaluates the applications' responses to each payload sent.</p>
+<p>The Bastion is designed to automate testing on vulnerable applications, such as OWASP's DVWA (Damn Vulnerable Web Application) and Mutillidae, serves as a benchmarking mechanism for Web Application Firewalls (WAFs). This tool operates by sending a series of carefully crafted payloads known to exploit specific vulnerabilities in these test applications. During these tests, the tool evaluates the applications' responses to each payload sent.</p>
 
 <p>The underlying logic of this tool is straightforward yet effective: it attempts to exploit known vulnerabilities in these applications and monitors how the responses are handled by both the applications and, more crucially, by the WAFs implemented to protect them. When a payload results in a successful exploitation (i.e., the attack "was successful"), it indicates that the WAF failed to block the exploitation attempt, and the tool records this event as a failure in the protection offered by the WAF.</p>
 
