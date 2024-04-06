@@ -23,17 +23,17 @@ def run_test_script(script_path, base_url, send_rate):
 
 def display_welcome_message():
     ascii_art = """
-     ____        _       ____                  _   _   
-    |  _ \      | |     |  _ \                | (_) |     
-    | |_) |_   _| |_ ___| |_) | __ _ _ __   __| |_| |_  
-    |  _ <| | | | __/ _ \  _ < / _` | '_ \ / _` | | __|
-    | |_) | |_| | |_  __/ |_) | (_| | | | | (_| | | |_ 
-    |____/ \__, |\__\___|____/ \__,_|_| |_|\__,_|_|\__|
-            __/ |                       Made by               
-           |___/    
+     ____           _____ _______ _____ ____  _   _ 
+    |  _ \   /\    / ____|__   __|_   _/ __ \| \ | |
+    | |_) | /  \  | (___    | |    | || |  | |  \| |
+    |  _ < / /\ \  \___ \   | |    | || |  | | . ` | 
+    | |_) / ____ \ ____) |  | |   _| |_ |__| | |\  |
+    |____/_/    \_\_____/   |_|  |_____\____/|_| \_|
+                               Made by ByteBandit               
+
     """  
     print(ascii_art)
-    print("Welcome to WAFHackProbe!\n")
+    print("Welcome to Bastion!\n")
     print("1. Explore Mutillidae")
     print("2. Explore DVWA")
     print("3. Exit")
@@ -176,7 +176,7 @@ def main():
         print(f'Tests Failed: {aggregated_failed_tests}')
         
     elif choice == '3':
-        print("Exiting WAFHackProbe. Goodbye!")
+        print("Exiting Bastion. Goodbye!")
         sys.exit(0)
     else:
         print("Invalid option. Exiting...")
