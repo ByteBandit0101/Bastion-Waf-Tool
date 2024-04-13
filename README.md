@@ -1,6 +1,18 @@
-<H1>Bastion: A Tool for WAF Evaluation</H1>
+<a name="readme-top"></a>
+[![Contributors][contributors-shield]][contributors-url]
+[![Issues][issues-shield]][issues-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
-Made by <b>ByteBandit</b>
+
+
+
+<H1>BASTION: A Tool for WAF Evaluation</H1>
+<p align="center">
+<img src=https://github.com/ByteBandit0101/Bastion-Waf-Tool/assets/111284802/c8faa530-b8fe-45d8-ae86-93a3a46131c1></p>
+<p align="center">Made by <b>ByteBandit</b></p>
+<p align="center">
+<img src=http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge></p>
+
 
 <h1>About the tool</h1>
 <p>The Bastion is designed to automate testing on vulnerable applications, such as OWASP's DVWA (Damn Vulnerable Web Application) and Mutillidae, serves as a benchmarking mechanism for Web Application Firewalls (WAFs). This tool operates by sending a series of carefully crafted payloads known to exploit specific vulnerabilities in these test applications. During these tests, the tool evaluates the applications' responses to each payload sent.</p>
@@ -10,10 +22,52 @@ Made by <b>ByteBandit</b>
 <p>Conversely, if the WAF manages to identify and block the exploitation attempt, preventing the payload from causing any harm or gaining unauthorized access, the tool records this as a success for the WAF ("WAF blocked it"). This continuous testing process allows for a comparative assessment of the effectiveness of different WAFs in protecting against a standardized set of known attacks.</p>
 
 <p>This automated approach not only saves significant time that would otherwise be spent on manual testing but also provides a quantitative metric on the effectiveness of WAFs in protecting web applications against known exploitation attempts. This tool can be extremely useful for organizations looking to strengthen their cyber defenses by evaluating different WAF solutions before making a large-scale implementation.</p>
-  <section>
-  <h1>Exploited vulnerabilities</h1>
-  <h1>Multilidae</h1>      
-  <h2>add-to-your-blog.php</h2>
+
+### Built With
+[![python][Python.py]][Python-url]
+
+
+### Installation
+
+## Linux
+1. Clone the repo
+   ```sh
+   git clone https://github.com/ByteBandit0101/Bastion-Waf-Tool.git
+   ```
+2. Go to Bastion-Waf-Tool directory
+   ```sh
+   cd Bastion-Waf-Tool
+   ```
+3. Install requeriments.txt
+   ```js
+   pip install requeriments.txt
+   ```
+4. Run
+   ```js
+   python3 run_all_tests.py
+   ```
+## Windows
+1. Clone the repo
+   ```sh
+   git clone https://github.com/ByteBandit0101/Bastion-Waf-Tool.git
+   ```
+2. Go to Bastion-Waf-Tool directory
+   ```sh
+   cd Bastion-Waf-Tool
+   ```
+3. Install requeriments.txt
+   ```js
+   pip install requeriments.txt
+   ```
+4. Run
+   ```js
+   python3 run_all_tests.py
+   ```
+
+  ### Exploited vulnerabilities
+  Here are the pages that BASTION exploits in both Multilidae and DVWA and their respective vulnerabilities
+  <h2>Multilidae</h2>      
+  <h3>add-to-your-blog.php</h3>
         <ul>
             <li>SQL Injection on blog entry</li>
             <li>SQL Injection on logged in user name</li>
@@ -215,3 +269,14 @@ Made by <b>ByteBandit</b>
     <ul></ul>
     
   </section>
+
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/lucazeved/
+[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
+[contributors-url]: https://https://github.com/ByteBandit0101/Bastion-Waf-Tool/graphs/contributors
+[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
+[issues-url]: https://github.com/ByteBandit0101/Bastion-Waf-Tool/issues
+[Python.py]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
+[Python-url]: https://www.python.org/
+
+
