@@ -66,207 +66,202 @@
 
   ### Exploited vulnerabilities
   Here are the pages that BASTION exploits in both Multilidae and DVWA and their respective vulnerabilities
-  <h2>Multilidae</h2>      
+  <h3>Multilidae</h3>      
   <h3>add-to-your-blog.php</h3>
         <ul>
-            <li>SQL Injection on blog entry</li>
-            <li>SQL Injection on logged in user name</li>
-            <li>Cross site scripting on blog entry</li>
-            <li>Cross site scripting on logged in user name</li>
-            <li>Log injection on logged in user name</li>
-            <li>Cross site request forgery</li>
-            <li>JavaScript validation bypass</li>
-            <li>XSS in the form title via logged in username</li>
-            <li>HTML injection in blog input field</li>
-            <li>Application Exception Output</li>
-            <li>Application Log Injection</li>
-            <li>Known Vulnerable Output: Name Comment "Add blog for" title</li>
+            <ul>SQL Injection on blog entry</ul>
+            <ul>SQL Injection on logged in user name</ul>
+            <ul>Cross site scripting on blog entry</ul>
+            <ul>Cross site scripting on logged in user name</ul>
+            <ul>Log injection on logged in user name</ul>
+            <ul>Cross site request forgery</ul>
+            <ul>JavaScript validation bypass</ul>
+            <ul>XSS in the form title via logged in username</ul>
+            <ul>HTML injection in blog input field</ul>
+            <ul>Application Exception Output</ul>
+            <ul>Application Log Injection</ul>
+            <ul>Known Vulnerable Output: Name Comment "Add blog for" title</ul>
         </ul>
     </section>
 
    <section>
-        <h2>arbitrary-file-inclusion.php</h2>
+        <h3>arbitrary-file-inclusion.php</h3>
         <ul>
-            <li>System file compromise</li>
-            <li>Load any page from any site</li>
-            <li>Reflected XSS via the value in the "page" URL parameter</li>
-            <li>Server-side includes</li>
-            <li>HTML injection</li>
-            <li>Remote File Inclusion</li>
-            <li>Local File Inclusion</li>
-            <li>Method Tampering</li>
+            <ul>System file compromise</ul>
+            <ul>Load any page from any site</ul>
+            <ul>Reflected XSS via the value in the "page" URL parameter</ul>
+            <ul>Server-side includes</ul>
+            <ul>HTML injection</ul>
+            <ul>Remote File Inclusion</ul>
+            <ul>Local File Inclusion</ul>
+            <ul>Method Tampering</ul>
         </ul>
     </section>
      <section>
-        <h2>back-button-discussion.php</h2>
+        <h3>back-button-discussion.php</h3>
         <ul>
-            <li>Reflected XSS via referer HTTP header</li>
-            <li>JS Injection via referer HTTP header</li>
-            <li>HTML injection via referer HTTP header</li>
-            <li>Unvalidated redirect</li>
+            <ul>Reflected XSS via referer HTTP header</ul>
+            <ul>JS Injection via referer HTTP header</ul>
+            <ul>HTML injection via referer HTTP header</ul>
+            <ul>Unvalidated redirect</ul>
         </ul>
     </section>
 
    
   <section>
-        <h2>browser-info.php</h2>
+        <h3>browser-info.php</h3>
         <ul>
-            <li>Reflected XSS via referer HTTP header</li>
-            <li>JS Injection via referer HTTP header</li>
-            <li>HTML injection</li>
-            <li>Reflected XSS via user-agent string HTTP header</li>
+            <ul>Reflected XSS via referer HTTP header</ul>
+            <ul>JS Injection via referer HTTP header</ul>
+            <ul>HTML injection</ul>
+            <ul>Reflected XSS via user-agent string HTTP header</ul>
         </ul>
   </section>
 
     
   <section>
-        <h2>dns-lookup.php</h2>
+        <h3>dns-lookup.php</h3>
         <ul>
-            <li>Cross site scripting on the host/ip field</li>
-            <li>O/S Command injection on the host/ip field</li>
-            <li>This page writes to the log. SQLi and XSS on the log are possible</li>
-            <li>HTML injection</li>
-            <li>GET for POST (method tampering) is possible</li>
-            <li>Application Log Injection</li>
-            <li>JavaScript Validation Bypass</li>
+            <ul>Cross site scripting on the host/ip field</ul>
+            <ul>O/S Command injection on the host/ip field</ul>
+            <ul>This page writes to the log. SQLi and XSS on the log are possible</ul>
+            <ul>HTML injection</ul>
+            <ul>GET for POST (method tampering) is possible</ul>
+            <ul>Application Log Injection</ul>
+            <ul>JavaScript Validation Bypass</ul>
         </ul>
   </section>
 
    
   <section>
-        <h2>document-viewer.php</h2>
+        <h3>document-viewer.php</h3>
         <ul>
-            <li>Cross Site Scripting</li>
-            <li>HTML injection</li>
-            <li>HTTP Parameter Pollution</li>
-            <li>Frame source injection</li>
-            <li>Method Tampering</li>
-            <li>Application Log Injection</li>
+            <ul>Cross Site Scripting</ul>
+            <ul>HTML injection</ul>
+            <ul>HTTP Parameter Pollution</ul>
+            <ul>Frame source injection</ul>
+            <ul>Method Tampering</ul>
+            <ul>Application Log Injection</ul>
         </ul>
   </section>
 
    
   <section>
-        <h2>login.php</h2>
+        <h3>login.php</h3>
         <ul>
-            <li>Authentication bypass SQL injection via username and password fields</li>
-            <li>SQL injection via username and password fields</li>
-            <li>XSS via username field</li>
-            <li>JavaScript validation bypass</li>
-            <li>HTML injection via username field</li>
-            <li>Username enumeration</li>
-            <li>Application Log Injection</li>
+            <ul>Authentication bypass SQL injection via username and password fields</ul>
+            <ul>SQL injection via username and password fields</ul>
+            <ul>XSS via username field</ul>
+            <ul>JavaScript validation bypass</ul>
+            <ul>HTML injection via username field</ul>
+            <ul>Username enumeration</ul>
+            <ul>Application Log Injection</ul>
         </ul>
   </section>
   <section>
-        <h2>register.php</h2>
+        <h3>register.php</h3>
         <ul>
-            <li>SQL injection, HTML injection, and XSS via username, signature, and password fields</li>
-            <li>Method tampering</li>
-            <li>Application Log Injection</li>
+            <ul>SQL injection, HTML injection, and XSS via username, signature, and password fields</ul>
+            <ul>Method tampering</ul>
+            <ul>Application Log Injection</ul>
         </ul>
     </section>
 
     
   <section>
-        <h2>repeater.php</h2>
+        <h3>repeater.php</h3>
         <ul>
-            <li>HTML injection and XSS</li>
-            <li>Method tampering</li>
-            <li>Parameter addition</li>
-            <li>Buffer overflow</li>
+            <ul>HTML injection and XSS</ul>
+            <ul>Method tampering</ul>
+            <ul>Parameter addition</ul>
+            <ul>Buffer overflow</ul>
         </ul>
   </section>
 
   
   <section>
-        <h2>set-background-color.php</h2>
+        <h3>set-background-color.php</h3>
         <ul>
-            <li>Cascading style sheet injection and XSS via the color field</li>
+            <ul>Cascading style sheet injection and XSS via the color field</ul>
         </ul>
   </section>
 
    
   <section>
-        <h2>user-info.php</h2>
+        <h3>user-info.php</h3>
         <ul>
-            <li>SQL injection to dump all usernames and passwords via username or password field</li>
-            <li>XSS via any of the displayed fields</li>
-            <li>XSS via the username field</li>
-            <li>JavaScript validation bypass</li>
+            <ul>SQL injection to dump all usernames and passwords via username or password field</ul>
+            <ul>XSS via any of the displayed fields</ul>
+            <ul>XSS via the username field</ul>
+            <ul>JavaScript validation bypass</ul>
         </ul>
   </section>
 
     
   <section>
-        <h2>user-poll.php</h2>
+        <h3>user-poll.php</h3>
         <ul>
-            <li>Parameter pollution</li>
-            <li>Method Tampering</li>
-            <li>XSS via the choice parameter</li>
-            <li>Cross site request forgery to force user choice</li>
-            <li>HTML injection</li>
+            <ul>Parameter pollution</ul>
+            <ul>Method Tampering</ul>
+            <ul>XSS via the choice parameter</ul>
+            <ul>Cross site request forgery to force user choice</ul>
+            <ul>HTML injection</ul>
         </ul>
   </section>
 
    
   <section>
-        <h2>xml-validator.php</h2>
-        <ul>
-            <li>XML Entity Injection Attack</li>
-            <li>XML Entity Expansion</li>
-            <li>XML Injection</li>
-            <li>Reflected Cross site scripting via XML Injection</li>
-        </ul>
+        <h3>xml-validator.php</h3>
+         <ul>
+           <ul>XML Entity Injection Attack </ul>
+           <ul>XML Entity Expansion </ul>
+           <ul>XML Injection </ul>
+           <ul>Reflected Cross site scripting via XML Injection </ul>
+         </ul>
+       
 
-  <h1>DVWA</h1> 
-  <h2>Brute Force</h2>
-    <ul></ul>
+  <h3>DVWA - Damn Vulnerable Web Application</h3> 
+  <h3>Brute Force</h3>
+    <ul>This vulnerability allows an attacker to try many passwords or keys with the hope of eventually guessing correctly. DVWA can be used to practice brute force attacks on login forms.</ul>
 
-  <h2>Command Injection</h2>
-    <ul></ul>
+  <h3>Command Injection</h3>
+    <ul>This security flaw occurs when an attacker can inject arbitrary commands into an operating system through a vulnerable application, typically through web forms.</ul>
 
-  <h2>CSRF</h2>
-    <ul></ul>
+  <h3>CSRF</h3>
+    <ul>A CSRF attack tricks a user's browser into performing unwanted actions on a site where they are currently authenticated, exploiting the trust that a site has in the user's browser.</ul>
 
-  <h2> File Inclusion</h2>
-    <ul></ul>
+  <h3> File Inclusion</h3>
+    <ul> There are two types of file inclusion: Local File Inclusion (LFI) and Remote File Inclusion (RFI). These vulnerabilities allow an attacker to include files on the server or via remote URLs, respectively, which can lead to arbitrary code execution. </ul>
 
-  <h2>  File Upload</h2>
-    <ul></ul>
+  <h3>  File Upload</h3>
+    <ul>This vulnerability occurs when an application allows users to upload files without proper security checks, enabling the upload of malicious scripts that can be executed on the server.</ul>
 
-  <h2>Insecure CAPTCHA </h2>
-    <ul></ul>
+  <h3>Insecure CAPTCHA </h3>
+    <ul>CAPTCHAs are used to ensure that the user is human and not a bot. An insecure CAPTCHA can be automated or bypassed, allowing bots to perform malicious actions.</ul>
 
-  <h2>SQL Injection</h2>
-    <ul></ul>
+  <h3>SQL Injection</h3>
+    <ul>This is one of the most dangerous vulnerabilities, where an attacker can inject arbitrary SQL commands, which are executed by the database. This can lead to the exposure of sensitive data, data corruption, or loss of control over the database.</ul>
 
-  <h2>SQL Injection (Blind)</h2>
-    <ul></ul>
+  <h3>SQL Injection (Blind)</h3>
+    <ul> A variation of SQL Injection where the attacker cannot see the result of the injection directly, but can infer information through the application's behavior or through indirect error messages.</ul>
   
-  <h2>Weak Session IDs</h2>
-    <ul></ul>
+  <h3>Weak Session IDs</h3>
+    <ul>Weak session IDs can be easily guessed or predicted, allowing an attacker to hijack another user's session, thereby taking control over someone else's account.</ul>
 
-  <h2>XSS (DOM)</h2>
-    <ul></ul>
-  
-  <h2>XSS (Reflect)</h2>
-    <ul></ul>
+  <h3>XSS (DOM, Reflect, Stored)</h3>
+    <ul>Cross-Site Scripting (XSS) allows attackers to inject malicious scripts into pages viewed by other users. Stored XSS stores the malicious script on the server; Reflected XSS sends the script as part of a request that is reflected by the server to the user; DOM XSS manipulates the DOM to inject the malicious script.</ul>
 
-  <h2>XSS (Stored)</h2>
-    <ul></ul>
+  <h3>CSP Bypass</h3>
+    <ul>Content Security Policy (CSP) is a security measure to detect and mitigate attacks such as XSS and data injection. A CSP bypass allows the attacker to circumvent CSP restrictions, executing unauthorized scripts.</ul>
 
-  <h2>CSP Bypass</h2>
-    <ul></ul>
+  <h3>JavaScript</h3>
+    <ul>Vulnerabilities in JavaScript can include security issues in how JavaScript code is executed or manipulated, allowing various attacks, including XSS.</ul>
 
-  <h2>JavaScript</h2>
-    <ul></ul>
+  <h3>Authorisation Bypass</h3>
+    <ul>This vulnerability occurs when authorization restrictions in an application are poorly configured or can be circumvented, allowing a user to access functions or data without the necessary permissions.</ul>
 
-  <h2>Authorisation Bypass</h2>
-    <ul></ul>
-
-  <h2>Open HTTP Redirect</h2>
-    <ul></ul>
+  <h3>Open HTTP Redirect</h3>
+    <ul>This vulnerability happens when a web application redirects users to other URLs using untrusted input data, which can lead to phishing attacks or other misuses.</ul>
     
   </section>
 
