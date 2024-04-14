@@ -174,7 +174,7 @@ def main():
         print(f'Total Tests: {total_aggregated_tests}')
         print(f'Tests Passed: {aggregated_passed_tests}')
         print(f'Tests Failed: {aggregated_failed_tests}')
-        
+    
     elif choice == '3':
         print("Exiting Bastion. Goodbye!")
         sys.exit(0)
