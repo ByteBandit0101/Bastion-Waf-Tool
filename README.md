@@ -75,16 +75,16 @@
    Choose an option: "Enter the desired option"
    ```
 2. Enter the target url
+   (Example: https://test.com)
    ```sh
    Please enter the base URL: "put your url here"
    ```
-   Example: https://test.com
 3. Select the speed of requests:
    low = 7 / medium = 2 / high = 0.5
    ```sh
    Choose the request send rate (low, medium, high):"Enter the desired option"
    ```
-3. At the end of the test you can choose to save the logs in a .zip (save) or delete them (clear):
+4. At the end of the test you can choose to save the logs in a .zip (save) or delete them (clear):
    ```sh
    Do you want to clear the logs folder or save? (clear/save): "Enter the desired option"
    ```
