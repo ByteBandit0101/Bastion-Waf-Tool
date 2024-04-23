@@ -21,7 +21,7 @@ else:
     sys.exit(1)
 
 # Map request rate to a specific time interval
-delays = {'low': 15, 'medium': 2, 'high': 0.5}
+delays = {'low': 10, 'medium': 5, 'high': 3}
 delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unrecognized
 
 # Construct the target URL for brute force attacks

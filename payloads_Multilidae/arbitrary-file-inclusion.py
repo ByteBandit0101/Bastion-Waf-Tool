@@ -19,7 +19,7 @@ else:
     sys.exit(1)
 
 # Maps the sending rate to a specific time interval
-delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delays = {'low': 10, 'medium': 5, 'high': 3}
 delay = delays.get(sending_rate, 2)  # Uses 'medium' as default if the rate is not recognized
 
 # Build the target URL using the base URL and the page name

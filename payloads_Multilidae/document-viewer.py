@@ -22,7 +22,7 @@ else:
     sys.exit(1)
 
 # Maps the send rate to a specific time interval
-delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delays = {'low': 10, 'medium': 5, 'high': 3}
 delay = delays.get(send_rate, 2)  # Uses 'medium' as default if the rate is not recognized
 
 target_url = f"{base_url}/index.php?page=document-viewer.php"
