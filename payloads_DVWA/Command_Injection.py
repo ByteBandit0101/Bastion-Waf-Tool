@@ -19,7 +19,7 @@ else:
     print("Base URL and/or request rate were not provided.")
     sys.exit(1)
 
-delays = {'low': 7, 'medium': 2, 'high': 0.5}
+delays = {'low': 15, 'medium': 2, 'high': 0.5}
 delay = delays.get(request_rate, 'medium')
 
 exec_url = f"{base_url}/vulnerabilities/exec/"
