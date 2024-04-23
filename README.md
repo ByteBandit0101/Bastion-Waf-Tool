@@ -9,9 +9,12 @@
 <H1>BASTION: A Tool for WAF Evaluation</H1>
 <p align="center">
 <img src=https://github.com/ByteBandit0101/Bastion-Waf-Tool/assets/111284802/c8faa530-b8fe-45d8-ae86-93a3a46131c1></p>
-<p align="center">Made by <b>ByteBandit</b></p>
+<p align="center">Made by <b>ByteBandit0101</b></p>
 <p align="center">
 <img src=http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge></p>
+
+<p align="center"><b>⚠️WARNING⚠️</b></p>
+<p align="center">This tool is intended for testing in controlled environments with the intent of evaluating wafs</p>
 
 
 <h1>About the tool</h1>
@@ -61,9 +64,30 @@
    ```
 4. Run
    ```js
-   python3 run_all_tests.py
+   python run_all_tests.py
    ```
-
+### How To Use
+1. Choose the scenario
+   ```sh
+   1. Explore Mutillidae
+   2. Explore DVWA
+   3. Exit
+   Choose an option: "Enter the desired option"
+   ```
+2. Enter the target url
+   (Example: https://test.com)
+   ```sh
+   Please enter the base URL: "put your url here"
+   ```
+3. Select the speed of requests:
+   low = 7 / medium = 2 / high = 0.5
+   ```sh
+   Choose the request send rate (low, medium, high):"Enter the desired option"
+   ```
+4. At the end of the test you can choose to save the logs in a .zip (save) or delete them (clear):
+   ```sh
+   Do you want to clear the logs folder or save? (clear/save): "Enter the desired option"
+   ```
   ### Exploited vulnerabilities
   Here are the pages that BASTION exploits in both Multilidae and DVWA and their respective vulnerabilities
   <h3>Multilidae</h3>      
