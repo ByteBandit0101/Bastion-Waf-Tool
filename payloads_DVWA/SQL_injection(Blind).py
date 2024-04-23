@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import requests
 from datetime import datetime
 from pathlib import Path
@@ -24,6 +25,38 @@ delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unr
 
 sqli_blind_url = f"{base_url}/vulnerabilities/sqli_blind/"
 
+# Headers to spoof User-Agent and IP address
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'X-Forwarded-For': '192.168.1.1'
+}
+
+# Construct the target URL for brute force attacks
+target_url = f"{base_url}/vulnerabilities/brute/"
+login_url = f"{base_url}/login.php"
+security_url = f"{base_url}/security.php"
+
+def login_and_setup_security():
+    #response = session.get(login_url)
+    data = {
+        'username': 'admin',
+        'password': 'password',
+        'Login': 'Login',
+    }
+    response = session.post(login_url, data=data, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+    time.sleep(delay) 
+    
+    #response = session.get(security_url)
+    data = {
+        'security': 'low',
+        'seclev_submit': 'Submit',
+        'user_token': user_token
+    }
+    session.post(security_url, data=data, headers=headers)
+    time.sleep(delay) 
+    
 def blind_sql_injection_attack():
     total_tests = 0
     tests_passed = 0
@@ -91,4 +124,5 @@ def blind_sql_injection_attack():
     print(f"Results saved to {results_file}")
 
 if __name__ == "__main__":
+    login_and_setup_security()
     blind_sql_injection_attack()

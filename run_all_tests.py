@@ -38,7 +38,7 @@ def ask_test_mode():
     print("Do you want to run all tests automatically or select them manually?")
     print("1. Run all tests automatically")
     print("2. Select tests manually")
-    choice = input("Choose an option (1 or 2): ")
+    choice = input("Choose an option: ")
     return choice
 
 def aggregate_results():

