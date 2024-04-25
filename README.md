@@ -80,11 +80,40 @@
    Please enter the base URL: "put your url here"
    ```
 3. Select the speed of requests:
-   low = 7 / medium = 2 / high = 0.5
+   low = 10 / medium = 5 / high = 3
    ```sh
    Choose the request send rate (low, medium, high):"Enter the desired option"
    ```
-4. At the end of the test you can choose to save the logs in a .zip (save) or delete them (clear):
+4. Choose whether you want to run all tests or choose which ones will be run:
+   ```sh
+   Do you want to run all tests automatically or select them manually?
+   1. Run all tests automatically
+   2. Select tests manually
+   Choose an option: "put your url here"
+   ```
+   #### Case 1:
+   It will run all the scripts in order and at the end give an overview of the test results
+   ```sh
+   Do you want to run all tests automatically or select them manually?
+   1. Run all tests automatically
+   2. Select tests manually
+   Choose an option: 1
+   ```
+
+   #### Case 2:
+   If you choose <b>"yes"</b> it will run the script that is defined, and at the end it will ask if you want to run the next ones.
+   ```sh
+   Choose an option: 2
+   Do you want to execute Brute_Force.py? (yes/no): yes
+   ```
+   If you choose <b>"no" </b>it will ignore the current script and skip to the next one asking if you want to run it.
+   ```sh
+   Choose an option: 2
+   Do you want to execute Brute_Force.py? (yes/no): no
+   ```
+
+      
+6. At the end of the test you can choose to save the logs in a .zip (save) or delete them (clear):
    ```sh
    Do you want to clear the logs folder or save? (clear/save): "Enter the desired option"
    ```
