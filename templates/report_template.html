@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bastion Test Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #004a7c;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            border-bottom: 5px solid #000;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .chart-container {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #004a7c;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .summary {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Bastion Test Results</h1>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="resultsChart"></canvas>
+    </div>
+
+    <table>
+        <tr>
+            <th>Test Script</th>
+            <th>Tests Passed</th>
+            <th>Tests Failed</th>
+        </tr>
+        <!-- Data placeholders that will be replaced by your script -->
+        {{test_data_rows}}
+    </table>
+
+    <div class="summary">
+        <p>Total Tests: {{total_tests}}</p>
+        <p>Tests Passed: {{tests_passed}}</p>
+        <p>Tests Failed: {{tests_failed}}</p>
+    </div>
+
+    <canvas id="testResultsChart" width="400" height="200"></canvas>
+    <script>
+        const testData = JSON.parse('{{test_data}}');
+
+        const ctx = document.getElementById('testResultsChart').getContext('2d');
+        const testResultsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: testData.labels,
+                datasets: [{
+                    label: 'Tests Passed',
+                    data: testData.passed_data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Tests Failed',
+                    data: testData.failed_data,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+</html>
