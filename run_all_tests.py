@@ -83,14 +83,23 @@ def display_welcome_message():
     print("1. Explore Mutillidae")
     print("2. Explore DVWA")
     print("3. Exit")
-    return input("Choose an option: ")
+    
+    while True:
+        choice = input("Choose an option (1, 2, or 3): ")
+        if choice in ['1', '2', '3']:
+            return choice
+        print("Invalid input. Please enter 1, 2, or 3.")
 
 def ask_test_mode():
     print("Do you want to run all tests automatically or select them manually?")
     print("1. Run all tests automatically")
     print("2. Select tests manually")
-    choice = input("Choose an option: ")
-    return choice
+    
+    while True:
+        choice = input("Choose an option (1 or 2): ")
+        if choice in ['1', '2']:
+            return choice
+        print("Invalid input. Please enter 1 or 2.")
 
 def aggregate_results():
     total_tests = 0
