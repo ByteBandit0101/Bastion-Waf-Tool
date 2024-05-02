@@ -43,7 +43,7 @@
    ```
 3. Install requeriments.txt
    ```js
-   pip install requeriments.txt
+   pip install -r requeriments.txt
    ```
 4. Run
    ```js
@@ -60,7 +60,7 @@
    ```
 3. Install requeriments.txt
    ```js
-   pip install requeriments.txt
+   pip install -r requeriments.txt
    ```
 4. Run
    ```js
