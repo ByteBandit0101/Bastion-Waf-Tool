@@ -1,6 +1,5 @@
 <a name="readme-top"></a>
-[![Contributors][contributors-shield]][contributors-url]
-[![Issues][issues-shield]][issues-url]
+
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 
@@ -118,8 +117,8 @@
    Do you want to clear the logs folder or save? (clear/save): "Enter the desired option"
    ```
   ### Exploited vulnerabilities
-  Here are the pages that BASTION exploits in both Multilidae and DVWA and their respective vulnerabilities
-  <h3>Multilidae</h3>      
+  Here are the pages that BASTION exploits in both Mutillidae and DVWA and their respective vulnerabilities
+  <h3>Mutillidae</h3>      
   <h3>add-to-your-blog.php</h3>
         <ul>
             <ul>SQL Injection on blog entry</ul>
