@@ -18,7 +18,6 @@ def run_test_script(script_path, base_url, send_rate):
     command = ['python', str(script_path), base_url, send_rate]
     completed_process = subprocess.run(command, text=True, capture_output=True)
     return completed_process.stdout
-    
 
 def generate_html_report():
     logs_dir = Path('logs')
@@ -29,14 +28,12 @@ def generate_html_report():
     total_tests = 0
     tests_passed = 0
     tests_failed = 0
-    # Initialize variables to store report data
     test_data = {
         'labels': [],
         'passed_data': [],
         'failed_data': []
     }
     
-    # Read log files and extract data for the report
     for log_file in logs_dir.glob('results_*.json'):
         with open(log_file, 'r') as file:
             log_data = json.load(file)
@@ -48,27 +45,21 @@ def generate_html_report():
             test_data['passed_data'].append(log_data['tests_passed'])
             test_data['failed_data'].append(log_data['tests_failed'])
     
-    # Read the HTML template
     with open(report_template_path, 'r') as file:
         report_html = file.read()
     
-    # Replace the placeholders in the template with the actual data
     report_html = report_html.replace('{{test_data_rows}}', test_data_rows)
     report_html = report_html.replace('{{total_tests}}', str(total_tests))
     report_html = report_html.replace('{{tests_passed}}', str(tests_passed))
     report_html = report_html.replace('{{tests_failed}}', str(tests_failed))
     report_html = report_html.replace('{{test_data}}', json.dumps(test_data))
     
-    # Write the final report to the output file
     with open(report_output_path, 'w') as file:
         file.write(report_html)
-    # Convert to an absolute path before converting to URI
+    
     report_output_path = report_output_path.absolute()
-
-    # Open the generated report in a new browser tab
     webbrowser.open_new_tab(report_output_path.as_uri())
 
-    
 def display_welcome_message():
     ascii_art = """
      ____           _____ _______ _____ ____  _   _ 
@@ -80,8 +71,8 @@ def display_welcome_message():
     """
     print(ascii_art)
     print("Welcome to Bastion!\n")
-    print("1. Explore Mutillidae")
-    print("2. Explore DVWA")
+    print("1. Use Tor")
+    print("2. Do not use Tor")
     print("3. Exit")
     
     while True:
@@ -152,9 +143,29 @@ def main():
         print("Exiting Bastion. Goodbye!")
         sys.exit(0)
 
+    use_tor = choice == '1'
+    
+    if use_tor:
+        print("1. Explore Mutillidae with Tor")
+        print("2. Explore DVWA with Tor")
+    else:
+        print("1. Explore Mutillidae without Tor")
+        print("2. Explore DVWA without Tor")
+        
+    while True:
+        test_choice = input("Choose an option (1 or 2): ")
+        if test_choice in ['1', '2']:
+            break
+        print("Invalid input. Please enter 1 or 2.")
+    
     base_url = input("Please enter the base URL: ")
     send_rate = input("Choose the request send rate (low, medium, high): ")
-    test_scripts_dir = pathlib.Path('./payloads_Multilidae') if choice == '1' else pathlib.Path('./payloads_DVWA')
+    
+    if test_choice == '1':
+        test_scripts_dir = pathlib.Path('./Payloads/payloads_Mutilidae/With_Tor') if use_tor else pathlib.Path('./Payloads/payloads_Mutilidae/Whitout_Tor')
+    else:
+        test_scripts_dir = pathlib.Path('./Payloads/payloads_DVWA/With_Tor') if use_tor else pathlib.Path('./Payloads/payloads_DVWA/Without_Tor')
+        
     test_mode = ask_test_mode()
 
     for test_script in test_scripts_dir.glob('*.py'):
@@ -167,6 +178,7 @@ def main():
                 if execute.lower() != 'yes':
                     continue
             print(f"Executing: {test_script.name}")
+            print("")
             result = run_test_script(test_script, base_url, send_rate)
             print(f"Result of {test_script.name}:\n{result}\n{'-'*60}")
 
