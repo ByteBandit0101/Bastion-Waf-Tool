@@ -66,6 +66,14 @@
    python run_all_tests.py
    ```
 ### How To Use
+1. Choose whether or not to use Tor
+   ```sh
+   1. Use Tor
+   2. Do not use Tor
+   3. Exit
+   Choose an option: "Enter the desired option"
+   ```
+
 1. Choose the scenario
    ```sh
    1. Explore Mutillidae
@@ -116,6 +124,9 @@
    ```sh
    Do you want to clear the logs folder or save? (clear/save): "Enter the desired option"
    ```
+  ### How to configure Tor proxy
+  Coming soon video tutorial...
+  
   ### Exploited vulnerabilities
   Here are the pages that BASTION exploits in both Mutillidae and DVWA and their respective vulnerabilities
   <h3>Mutillidae</h3>      
