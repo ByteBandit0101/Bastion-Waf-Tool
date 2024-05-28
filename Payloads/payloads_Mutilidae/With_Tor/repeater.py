@@ -53,7 +53,7 @@ def send_request_and_check_response(form_data, vulnerability_type, field, test_n
     session = create_isolated_tor_session()
     check_ip(session)
     
-    test_response = requests.post(target_url, data=form_data, headers=headers)
+    test_response = session.post(target_url, data=form_data, headers=headers)
     
     test_detail = {
         'field': field,

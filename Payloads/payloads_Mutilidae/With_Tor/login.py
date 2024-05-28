@@ -75,7 +75,7 @@ for field in form_fields:
         check_ip(session)
 
         total_tests += 1
-        test_response = requests.post(target_url, data=form_data, headers=headers)
+        test_response = session.post(target_url, data=form_data, headers=headers)
 
         print(f"Test {total_tests}: Field '{field}' with payload '{payload}'. Status code: {test_response.status_code}")
 

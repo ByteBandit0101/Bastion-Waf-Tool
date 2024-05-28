@@ -59,8 +59,6 @@ detailed_tests = []
 async def send_request_and_verify_response(payload, vulnerability_type, test_number):
     complete_url = f"{target_url}?file={quote(payload)}"
     async with httpx.AsyncClient() as client:
-        session = create_isolated_tor_session()  # Cria uma nova sessão para cada teste
-        check_ip(session)
         test_response = await client.get(complete_url)
 
         print(f"Test {test_number}: Testing '{vulnerability_type}'. Status code: {test_response.status_code}")

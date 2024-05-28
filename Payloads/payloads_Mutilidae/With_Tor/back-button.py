@@ -61,7 +61,7 @@ payloads = {
 def send_request_and_verify_response(complete_url, vulnerability_type, test_number):
     session = create_isolated_tor_session()  # Cria uma nova sessão para cada teste
     check_ip(session)
-    test_response = requests.get(complete_url, headers=headers)
+    test_response = session.get(complete_url, headers=headers)
     
     soup = BeautifulSoup(test_response.text, 'html.parser')
     title = soup.find('title').text if soup.find('title') else ''

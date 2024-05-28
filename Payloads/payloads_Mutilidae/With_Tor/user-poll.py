@@ -61,7 +61,7 @@ def send_request_and_check_response(complete_url, vulnerability_type, test_numbe
     session = create_isolated_tor_session()
     check_ip(session)
     
-    test_response = requests.get(complete_url, headers=headers)
+    test_response = session.get(complete_url, headers=headers)
     print(f"Test {test_number}: Testing '{vulnerability_type}'. Status code: {test_response.status_code}")
     
     test_detail = {

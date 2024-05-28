@@ -93,7 +93,7 @@ for field in form_fields:
         total_tests += 1
 
         # Send the request
-        test_response = requests.post(target_url, data=form_data, headers=headers)
+        test_response = session.post(target_url, data=form_data, headers=headers)
         
         test_detail = {
             'field': field,
