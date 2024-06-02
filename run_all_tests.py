@@ -14,10 +14,8 @@ import webbrowser
 logs_dir = Path('./logs')
 logs_dir.mkdir(exist_ok=True)
 
-def run_test_script(script_path, base_url, send_rate, tor_password=None):
+def run_test_script(script_path, base_url, send_rate):
     command = ['python', str(script_path), base_url, send_rate]
-    if tor_password:
-        command.append(tor_password)
     completed_process = subprocess.run(command, text=True, capture_output=True)
     return completed_process.stdout
 
@@ -146,10 +144,8 @@ def main():
         sys.exit(0)
 
     use_tor = choice == '1'
-    tor_password = None
     
     if use_tor:
-        tor_password = input("Please enter your Tor password: ")
         print("1. Explore Mutillidae with Tor")
         print("2. Explore DVWA with Tor")
     else:
@@ -166,7 +162,7 @@ def main():
     send_rate = input("Choose the request send rate (low, medium, high): ")
     
     if test_choice == '1':
-        test_scripts_dir = pathlib.Path('./Payloads/payloads_Mutilidae/With_Tor') if use_tor else pathlib.Path('./Payloads/payloads_Mutilidae/Without_Tor')
+        test_scripts_dir = pathlib.Path('./Payloads/payloads_Mutilidae/With_Tor') if use_tor else pathlib.Path('./Payloads/payloads_Mutilidae/Whitout_Tor')
     else:
         test_scripts_dir = pathlib.Path('./Payloads/payloads_DVWA/With_Tor') if use_tor else pathlib.Path('./Payloads/payloads_DVWA/Without_Tor')
         
@@ -183,7 +179,7 @@ def main():
                     continue
             print(f"Executing: {test_script.name}")
             print("")
-            result = run_test_script(test_script, base_url, send_rate, tor_password)
+            result = run_test_script(test_script, base_url, send_rate)
             print(f"Result of {test_script.name}:\n{result}\n{'-'*60}")
 
     aggregate_results()
